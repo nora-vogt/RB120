@@ -170,6 +170,10 @@ class GoodDog
   def some_method
     self.info
   end
+
+  def self.what_am_i # Class method definition
+    "I'm a GoodDog class!"
+  end
 end
 
 sparky = GoodDog.new('Sparky', '12 inches', '10 lbs')
@@ -177,4 +181,6 @@ puts sparky.info # Sparky weighs 10 lbs and is 12 inches tall.
 
 sparky.change_info('Spartacus', '36 inches', '80 lbs') # returns "80 lbs", the return value of the last method invoked within the `change_info` method
 puts sparky.info # Spartacus weighs 80 lbs and is 36 inches tall.
+
+puts GoodDog.what_am_i
 

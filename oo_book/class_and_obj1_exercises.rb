@@ -1,4 +1,5 @@
 =begin
+## Part 1 Exercises:
 # Exercise 1
 Create a class called MyCar. When you initialize a new instance or object of the class, allow the user to define some instance variables that tell us the year, color, and model of the car. Create an instance variable that is set to 0 during instantiation of the object to track the current current_speed of the car as well. Create instance methods that allow the car to current_speed up, brake, and shut the car off.
 
@@ -7,13 +8,22 @@ Add an accessor method to your MyCar class to change and view the color of your 
 
 # Exercise 3
 You want to create a nice interface that allows you to accurately describe the action you want your program to perform. Create a method called spray_paint that can be called on an object and will modify the color of the car.
+
+## Part 2 Exercises:
+# Exercise 4
+Add a class method to your MyCar class that calculates the gas mileage (i.e. miles per gallon) of any car.
+  - miles per gallon: divide # of miles drive by number of gallons
 =end
 
 class MyCar
   attr_accessor :color
-  attr_reader :year
+  attr_reader :year, :model
   # We don't want to add an attr_accessor :current_speed here, because we don't want the user to manually set the current speed
   # This means we will reassign the @current_speed instance variable itself, rather than use a setter method (we don't be defining a setter method because we don't want the user to manually set the speed.)
+
+  def self.miles_per_gallon(miles, gallons)  # Class method
+    puts "#{miles / gallons} miles per gallon of gas."
+  end
 
   def initialize(year, color, model)
     @year = year
@@ -47,6 +57,12 @@ class MyCar
     @current_speed = 0
     puts "Let's park this bad boy!"
   end
+
+  def to_s
+    # defined an attr_reader for :model
+    # but could also not, and just interpolate the instance var @model
+    "This car is a #{color} #{year} #{model}."
+  end
 end
 
 my_subaru = MyCar.new(2019, "White", "Crosstrek")
@@ -66,3 +82,9 @@ puts my_subaru.year
 
 my_subaru.spray_paint("red")
 puts my_subaru.color
+
+MyCar.miles_per_gallon(150, 4)
+
+tacoma = MyCar.new(1970, 'silver', 'Tacoma')
+puts tacoma # puts calls #to_s automatically
+puts "hello world" # built-in puts hasn't been overwritten
