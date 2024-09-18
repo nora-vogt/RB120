@@ -39,6 +39,13 @@ class MyCar
     puts "Your new #{color} paint job looks great!"
   end
 
+  def spray_paint(color)
+    self.color = color  # initially had @color = color; but we want to avoid referencing the instance variable directly when possible. 
+      # color = color doesn't work, as that appears we are reassigning the local variable `color` to the current value of `color`
+      # Need to use the `self.` syntax to reference the color setter method (color=)
+    puts "Your new #{color} paint job looks great!"
+  end
+
   def speed_up(number)
     @current_speed += number
     puts "You push the gas and accelerate by #{number} mph."
