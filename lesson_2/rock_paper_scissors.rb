@@ -7,11 +7,14 @@ Player
 
 RPSGame
   - needs a @round_winner
-    - maybe a determine_round_winner that also updates score?
+    - maybe a set_round_winner that also updates score?
     - then display_score uses @round_winner
   - needs a @game_winner
   - update_score
   - reset_score (when game is won / before starting a new game)
+
+# MISC NOTES
+ - Can #set_round_winner be refactored to just use the round_winner setter?
 =end
 
 class Move
@@ -95,7 +98,7 @@ end
 
 # Game Orchestration Engine
 class RPSGame
-  attr_accessor :human, :computer, :round_winner
+  attr_accessor :human, :computer, :round_winner, :game_winner
 
   ONE_POINT = 1
   ZERO_POINTS = 0
@@ -105,6 +108,7 @@ class RPSGame
     @human = Human.new
     @computer = Computer.new
     @round_winner = nil
+    @game_winner = nil
   end
 
   def display_welcome_message
@@ -120,7 +124,7 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}."
   end
 
-  def determine_round_winner
+  def set_round_winner
     if human.move > computer.move
       self.round_winner = human
     elsif human.move < computer.move
@@ -150,8 +154,36 @@ class RPSGame
     end
   end
 
+  def display_game_winner
+    puts ''
+    puts "#{game_winner.name} has #{WINNING_SCORE} points and wins the game! Congrats!"
+  end
+
   def reset_round_winner
     self.round_winner = nil
+  end
+
+  def reset_game_winner
+    self.game_winner = nil
+  end
+
+  def reset_score
+    players = [human, computer]
+    players.each do |player|
+      player.score = ZERO_POINTS
+    end
+  end
+
+  def reset_game
+    reset_score
+    reset_game_winner
+  end
+
+  def game_won?
+    players = [human, computer]
+    players.any? do |player|
+      self.game_winner = player if player.score == WINNING_SCORE
+    end
   end
 
   def play_again?
@@ -170,15 +202,21 @@ class RPSGame
     display_welcome_message
 
     loop do
-      human.choose
-      computer.choose
-      display_moves
-      determine_round_winner
-      display_round_winner
-      update_score
-      display_score
+      loop do
+        human.choose
+        computer.choose
+        display_moves
+        set_round_winner
+        display_round_winner
+        update_score
+        display_score
+        reset_round_winner
+        break if game_won?
+      end
+
+      display_game_winner
       break unless play_again?
-      reset_round_winner
+      reset_game
     end
 
     display_goodbye_message
