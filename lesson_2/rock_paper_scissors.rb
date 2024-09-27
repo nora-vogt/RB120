@@ -97,6 +97,10 @@ end
 class RPSGame
   attr_accessor :human, :computer, :round_winner
 
+  ONE_POINT = 1
+  ZERO_POINTS = 0
+  WINNING_SCORE = 5
+
   def initialize
     @human = Human.new
     @computer = Computer.new
@@ -125,10 +129,24 @@ class RPSGame
   end
 
   def display_round_winner
+    puts
     if round_winner
       puts "#{round_winner.name} won!"
     else
-      puts "It's a tie!"
+      puts "It's a tie! No points are awarded."
+    end
+  end
+
+  def update_score
+    round_winner.score += ONE_POINT if round_winner
+  end
+
+  def display_score
+    players = [human, computer]
+    puts
+    players.each do |player|
+      score = player.score
+      puts "#{player.name} has #{score} #{score == 1 ? 'point' : 'points'}."
     end
   end
 
@@ -157,8 +175,8 @@ class RPSGame
       display_moves
       determine_round_winner
       display_round_winner
-      #update_score
-      #display_score
+      update_score
+      display_score
       break unless play_again?
       reset_round_winner
     end
