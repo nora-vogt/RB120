@@ -15,6 +15,10 @@ RPSGame
 
 # MISC NOTES
  - Can #set_round_winner be refactored to just use the round_winner setter?
+ - Should displaying output be its own class?
+
+# NEXT:
+  - Add clear screen
 =end
 
 class Move
