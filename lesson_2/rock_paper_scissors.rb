@@ -17,10 +17,15 @@ RPSGame
  - Can #set_round_winner be refactored to just use the round_winner setter?
  - Should displaying output be its own class?
 
+# CURRENT: 
+- add Lizard and Spock
+This is a variation on the normal Rock Paper Scissors game by adding two more options - Lizard and Spock. The full explanation and rules are here.
+
 # NEXT:
   - Add clear screen
+  - Start yml file for extracting strings
+  - Add press enter to start the next round
 =end
-
 class Move
   VALUES = ['rock', 'paper', 'scissors']
 
@@ -124,6 +129,7 @@ class RPSGame
   end
 
   def display_moves
+    puts
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
   end
@@ -156,6 +162,7 @@ class RPSGame
       score = player.score
       puts "#{player.name} has #{score} #{score == 1 ? 'point' : 'points'}."
     end
+    puts
   end
 
   def display_game_winner
