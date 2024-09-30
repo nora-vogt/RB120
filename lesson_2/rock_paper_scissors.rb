@@ -19,8 +19,9 @@ RPSGame
  - Should displaying output be its own class?
 
 # CURRENT: 
-- add Lizard and Spock
-This is a variation on the normal Rock Paper Scissors game by adding two more options - Lizard and Spock. The full explanation and rules are here.
+-add a class for each move
+- the Move class could initialize with @value set to a collaborator object - Rock, Paper, etc.
+  - use the strings to choose the class?
 
 # NEXT:
   - Add clear screen
