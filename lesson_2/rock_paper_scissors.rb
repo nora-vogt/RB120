@@ -42,26 +42,6 @@ class Move
     @value = value
   end
 
-  # def scissors?
-  #   @value == 'scissors'
-  # end
-
-  # def rock?
-  #   @value == 'rock'
-  # end
-
-  # def paper?
-  #   @value == 'paper'
-  # end
-
-  # def lizard?
-  #   @value == 'lizard'
-  # end
-
-  # def spock?
-  #   @value == 'spock'
-  # end
-
   def >(other_move)
     WIN_COMBINATIONS[value].include?(other_move.value)
   end
