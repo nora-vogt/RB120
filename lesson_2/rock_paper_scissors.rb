@@ -1,3 +1,4 @@
+require 'pry'
 =begin
 # Implementing score as a state of the Player class (that Human and Computer) will inherit.
 
@@ -27,34 +28,45 @@ This is a variation on the normal Rock Paper Scissors game by adding two more op
   - Add press enter to start the next round
 =end
 class Move
-  VALUES = ['rock', 'paper', 'scissors']
+  attr_reader :value
+
+  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+  WIN_COMBINATIONS = { 'rock' => ['scissors', 'lizard'],
+                       'paper' => ['rock', 'spock'],
+                       'scissors' => ['paper', 'lizard'],
+                       'lizard' => ['spock', 'paper'],
+                       'spock' => ['scissors', 'rock'] }
 
   def initialize(value)
     @value = value
   end
 
-  def scissors?
-    @value == 'scissors'
-  end
+  # def scissors?
+  #   @value == 'scissors'
+  # end
 
-  def rock?
-    @value == 'rock'
-  end
+  # def rock?
+  #   @value == 'rock'
+  # end
 
-  def paper?
-    @value == 'paper'
-  end
+  # def paper?
+  #   @value == 'paper'
+  # end
+
+  # def lizard?
+  #   @value == 'lizard'
+  # end
+
+  # def spock?
+  #   @value == 'spock'
+  # end
 
   def >(other_move)
-    (rock? && other_move.scissors?) ||
-      (paper? && other_move.rock?) ||
-      (scissors? && other_move.paper?)
+    WIN_COMBINATIONS[value].include?(other_move.value)
   end
 
   def <(other_move)
-    (rock? && other_move.paper?) ||
-      (paper? && other_move.scissors?) ||
-      (scissors? && other_move.rock?)
+    WIN_COMBINATIONS[other_move.value].include?(value)
   end
 
   def to_s
@@ -86,8 +98,8 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      puts "Please choose rock, paper, or scissors:"
-      choice = gets.chomp.downcase
+      puts "Please choose rock, paper, scissors, lizard, or Spock:"
+      choice = gets.strip.downcase
       break if Move::VALUES.include?(choice)
       puts "Sorry, invalid choice."
     end
