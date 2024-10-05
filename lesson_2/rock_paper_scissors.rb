@@ -1,53 +1,16 @@
 require 'pry'
 =begin
-# Implementing score as a state of the Player class (that Human and Computer) will inherit.
-
-Player
-  - has a @score attribute, initialize to 0
-    - can make the reader public
-
-RPSGame
-  - needs a @round_winner
-    - maybe a set_round_winner that also updates score?
-    - then display_score uses @round_winner
-  - needs a @game_winner
-  - update_score
-  - reset_score (when game is won / before starting a new game)
-
-# MISC NOTES
- - Can #set_round_winner be refactored to just use the round_winner setter?
- - Should displaying output be its own class?
-
 # CURRENT: 
-As long as the user doesn't quit, keep track of a history of moves by both the human and computer. What data structure will you reach for? Will you use a new class, or an existing class? What will the display output look like?
-
-- add tracking of round, to be able to display move according to round
-- Ask user before choosing a move if they would like to see the move history.
-
-{ round 1: {human => rock, computer => scissors}, round 2: {...}}
-
-{ human: {round1 => rock, round2 => spock}, computer: {round1 => scissors, round2 => lizard} }
-
-<Human object, @name..., @history {round1 => rock, round => spock, ...}
-
-To see all history
-iterate through a hash of players [human, computer]
-#{player} move list is:
-Round 1 - Rock
-Round 2 - Spock
-
-#{computer} move list is:
-Round 1 - 
-
-OR: Game has a History
-- store in a Hash
-  - round number is the key, value is a hash {human: rock, computer: scissors}
 
 
 # NEXT:
   - Add clear screen
   - Start yml file for extracting strings
   - Add press enter to start the next round
+
+# MISC NOTES
+ - Should displaying output be its own class?
+ - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
 =end
 class Move
   attr_reader :value
@@ -173,6 +136,13 @@ class RPSGame
     end
   end
 
+  def update_history
+    history[round_number] = { 
+      human.name => human.move.value, 
+      computer.name => computer.move.value
+    }
+  end
+
   def update_score
     round_winner.score += ONE_POINT if round_winner
   end
@@ -182,6 +152,7 @@ class RPSGame
   end
 
   def update_stats
+    update_history
     update_score
     update_round_number
   end
@@ -194,6 +165,18 @@ class RPSGame
       puts "#{player.name} has #{score} #{score == 1 ? 'point' : 'points'}."
     end
     puts
+  end
+
+  def display_history
+    puts ''
+    puts 'GAME HISTORY:'
+    history.each do |round, data|
+      puts "Round #{round}:"
+      data.each do |player, move|
+        puts "#{player} - #{move}"
+      end
+      puts ''
+    end
   end
 
   def display_game_winner
@@ -220,10 +203,15 @@ class RPSGame
     self.round_number = 1
   end
 
+  def reset_history # If we add @game_number later, then don't have to reset history.
+    self.history = {}
+  end
+
   def reset_game
     reset_score
     reset_game_winner
     reset_round_number
+    reset_history
   end
 
   def game_won?
@@ -258,11 +246,14 @@ class RPSGame
         display_round_winner
         update_stats
         display_score
-        reset_round_winner
+        #display_history
+    
         break if game_won?
+        reset_round_winner
       end
 
       display_game_winner
+
       break unless play_again?
       reset_game
     end
