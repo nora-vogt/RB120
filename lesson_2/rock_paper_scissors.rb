@@ -11,7 +11,59 @@ require 'pry'
  - Should displaying output be its own class?
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
+ - Where to put WINNING_SCORE so both Printable and RPSGame can access it?
 =end
+WINNING_SCORE = 5
+
+module Printable
+  def display_welcome_message
+    puts "Welcome to Rock, Paper, Scissors!"
+  end
+
+  def display_goodbye_message
+    puts "Thanks for playing Rock, Paper, Scissors! Goodbye!"
+  end
+
+  def display_moves
+    puts
+    puts "#{human.name} chose #{human.move}."
+    puts "#{computer.name} chose #{computer.move}."
+  end
+
+  def display_round_winner
+    puts
+    if round_winner
+      puts "#{round_winner.name} won!"
+    else
+      puts "It's a tie! No points are awarded."
+    end
+  end
+
+  def display_score
+    players = [human, computer]
+    puts "ROUND #{round_number}".center(20, '-')
+    players.each { |player| puts "#{player.name}: #{player.score}" }
+    puts '-' * 20
+    puts ''
+  end
+
+  def display_history
+    puts ''
+    puts 'GAME HISTORY:'
+    history.each do |round, data|
+      puts "Round #{round}:"
+      data.each do |player, move|
+        puts "#{player} - #{move}"
+      end
+      puts ''
+    end
+  end
+
+  def display_game_winner
+    puts "#{game_winner.name} has #{WINNING_SCORE} points and wins the game! Congrats!"
+  end
+end
+
 class Move
   attr_reader :value
 
@@ -84,12 +136,13 @@ end
 
 # Game Orchestration Engine
 class RPSGame
+  include Printable
+
   attr_accessor :human, :computer, :round_number, :round_winner, :game_winner, 
                 :history
 
   ONE_POINT = 1
   ZERO_POINTS = 0
-  WINNING_SCORE = 5
 
   def initialize
     @human = Human.new
@@ -100,34 +153,11 @@ class RPSGame
     @history = {}
   end
 
-  def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
-  end
-
-  def display_goodbye_message
-    puts "Thanks for playing Rock, Paper, Scissors! Goodbye!"
-  end
-  
-  def display_moves
-    puts
-    puts "#{human.name} chose #{human.move}."
-    puts "#{computer.name} chose #{computer.move}."
-  end
-
   def set_round_winner
     if human.move > computer.move
       self.round_winner = human
     elsif human.move < computer.move
       self.round_winner = computer
-    end
-  end
-
-  def display_round_winner
-    puts
-    if round_winner
-      puts "#{round_winner.name} won!"
-    else
-      puts "It's a tie! No points are awarded."
     end
   end
 
@@ -152,36 +182,9 @@ class RPSGame
     update_round_number unless game_won?
   end
 
-  def display_score
-    players = [human, computer]
-    puts "ROUND #{round_number}".center(20, '-')
-    players.each { |player| puts "#{player.name}: #{player.score}" }
-    puts '-' * 20
-    puts ''
-  end
-
-  def display_history
-    puts ''
-    puts 'GAME HISTORY:'
-    history.each do |round, data|
-      puts "Round #{round}:"
-      data.each do |player, move|
-        puts "#{player} - #{move}"
-      end
-      puts ''
-    end
-  end
-
-  def display_game_winner
-    puts "#{game_winner.name} has #{WINNING_SCORE} points and wins the game! Congrats!"
-  end
-
-  def display_ask_to_continue
+  def prompt_to_continue
     puts "Press ENTER to continue:"
     gets
-  end
-
-  def start_next_round
   end
 
   def reset_round_winner
@@ -237,7 +240,7 @@ class RPSGame
     display_welcome_message
 
     loop do
-      display_ask_to_continue
+      prompt_to_continue
       loop do
         system 'clear'
         display_score
@@ -251,7 +254,7 @@ class RPSGame
     
         break if game_won?
         reset_round_winner
-        display_ask_to_continue
+        prompt_to_continue
       end
       sleep 2
       system 'clear'
