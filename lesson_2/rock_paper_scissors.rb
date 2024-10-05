@@ -1,14 +1,6 @@
 require 'pry'
 =begin
 # CURRENT: 
-
-# First, REDO HISTORY
-Each Game has a History
-
-History
-move_list
-  {Player => [rock paper scissors], Computer => [rock, paper, scissors] }
-
 #Computer personalities
 
 We have a list of robot names for our Computer class, but other than the name, there's really nothing different about each of them. It'd be interesting to explore how to build different personalities for each robot. For example, R2D2 can always choose "rock". Or, "Hal" can have a very high tendency to choose "scissors", and rarely "rock", but never "paper". You can come up with the rules or personalities for each robot. How would you approach a feature like this?
@@ -56,10 +48,6 @@ module Printable
     players.each { |player| puts "#{player.name}: #{player.score}" }
     puts '-' * 20
     puts ''
-  end
-
-  def display_history
-    history.to_s
   end
 
   def display_game_winner
@@ -158,7 +146,7 @@ class History
     }
   end
 
-  def to_s
+  def display
     puts ''
     puts 'GAME HISTORY:'
     move_log.each do |round, data|
@@ -288,7 +276,7 @@ class RPSGame
         set_round_winner
         display_round_winner
         update_stats
-        display_history
+        history.display
     
         break if game_won?
         reset_round_winner
