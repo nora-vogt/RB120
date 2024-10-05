@@ -14,9 +14,9 @@ We have a list of robot names for our Computer class, but other than the name, t
   - At start of game, choose computer opponent, or choose randomly
 
 # MISC NOTES
- - Should displaying output be its own class?
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
+ - display a welcome message before choosing a name
 =end
 module Printable
   def display_welcome_message
