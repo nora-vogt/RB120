@@ -17,10 +17,7 @@ We have a list of robot names for our Computer class, but other than the name, t
  - Should displaying output be its own class?
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
- - Where to put WINNING_SCORE so both Printable and RPSGame can access it?
 =end
-WINNING_SCORE = 5
-
 module Printable
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
@@ -53,8 +50,8 @@ module Printable
     puts ''
   end
 
-  def display_game_winner
-    puts "#{game_winner.name} has #{WINNING_SCORE} points and wins the game! Congrats!"
+  def display_game_winner(winning_score)
+    puts "#{game_winner.name} has #{winning_score} points and wins the game! Congrats!"
   end
 end
 
@@ -175,6 +172,7 @@ class RPSGame
 
   ONE_POINT = 1
   ZERO_POINTS = 0
+  WINNING_SCORE = 5
 
   def initialize
     @history = History.new
@@ -279,7 +277,7 @@ class RPSGame
       sleep 2
       system 'clear'
       display_score
-      display_game_winner
+      display_game_winner(WINNING_SCORE)
 
       break unless play_again?
       reset_game
