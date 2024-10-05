@@ -1,6 +1,9 @@
 require 'pry'
 =begin
 # CURRENT: 
+# Make history display more of a table
+  # when to ask user if they want to see the history?
+
 #Computer personalities
 
 We have a list of robot names for our Computer class, but other than the name, there's really nothing different about each of them. It'd be interesting to explore how to build different personalities for each robot. For example, R2D2 can always choose "rock". Or, "Hal" can have a very high tendency to choose "scissors", and rarely "rock", but never "paper". You can come up with the rules or personalities for each robot. How would you approach a feature like this?
@@ -157,6 +160,10 @@ class History
       puts ''
     end
   end
+
+  def reset
+    self.move_log = {}
+  end
 end
 
 # Game Orchestration Engine
@@ -186,13 +193,6 @@ class RPSGame
     end
   end
 
-  # def update_history
-  #   history[round_number] = { 
-  #     human.name => human.move.value, 
-  #     computer.name => computer.move.value
-  #   }
-  # end
-
   def update_score
     round_winner.score += ONE_POINT if round_winner
   end
@@ -202,8 +202,7 @@ class RPSGame
   end
 
   def update_stats
-    history.update(round_number, human, computer)
-    #update_history
+    history.update(round_number, human, computer) 
     update_score
     update_round_number unless game_won?
   end
@@ -232,15 +231,11 @@ class RPSGame
     self.round_number = 1
   end
 
-  def reset_history # If we add @game_number later, then don't have to reset history.
-    self.history = {}
-  end
-
   def reset_game
     reset_score
     reset_game_winner
     reset_round_number
-    reset_history
+    history.reset
   end
 
   def game_won?
@@ -264,9 +259,8 @@ class RPSGame
 
   def play
     display_welcome_message
-
+    prompt_to_continue
     loop do
-      prompt_to_continue
       loop do
         system 'clear'
         display_score
