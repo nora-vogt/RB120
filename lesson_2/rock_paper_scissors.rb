@@ -2,10 +2,21 @@ require 'pry'
 =begin
 # CURRENT: 
 
+# First, REDO HISTORY
+Each Game has a History
+
+History
+move_list
+  {Player => [rock paper scissors], Computer => [rock, paper, scissors] }
+
+#Computer personalities
+
+We have a list of robot names for our Computer class, but other than the name, there's really nothing different about each of them. It'd be interesting to explore how to build different personalities for each robot. For example, R2D2 can always choose "rock". Or, "Hal" can have a very high tendency to choose "scissors", and rarely "rock", but never "paper". You can come up with the rules or personalities for each robot. How would you approach a feature like this?
+
 
 # NEXT:
-  - Add clear screen
   - Start yml file for extracting strings
+  - At start of game, choose computer opponent, or choose randomly
 
 # MISC NOTES
  - Should displaying output be its own class?
@@ -48,15 +59,7 @@ module Printable
   end
 
   def display_history
-    puts ''
-    puts 'GAME HISTORY:'
-    history.each do |round, data|
-      puts "Round #{round}:"
-      data.each do |player, move|
-        puts "#{player} - #{move}"
-      end
-      puts ''
-    end
+    history.to_s
   end
 
   def display_game_winner
@@ -125,12 +128,46 @@ class Human < Player
 end
 
 class Computer < Player
+  attr_reader :history
+
+  def initialize(history)
+    super()
+    @history = history
+  end
+
   def set_name
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
   end
 
   def choose
     self.move = Move.new(Move::VALUES.sample)
+  end
+end
+
+class History
+  attr_accessor :move_log
+
+  def initialize
+    @move_log = {}
+  end
+
+  def update(round_number, human, computer)
+    self.move_log[round_number] = { 
+      human.name => human.move.value, 
+      computer.name => computer.move.value
+    }
+  end
+
+  def to_s
+    puts ''
+    puts 'GAME HISTORY:'
+    move_log.each do |round, data|
+      puts "Round #{round}:"
+      data.each do |player, move|
+        puts "#{player} - #{move}"
+      end
+      puts ''
+    end
   end
 end
 
@@ -145,12 +182,12 @@ class RPSGame
   ZERO_POINTS = 0
 
   def initialize
+    @history = History.new
     @human = Human.new
-    @computer = Computer.new
+    @computer = Computer.new(history)
     @round_number = 1
     @round_winner = nil
-    @game_winner = nil
-    @history = {}
+    @game_winner = nil 
   end
 
   def set_round_winner
@@ -161,12 +198,12 @@ class RPSGame
     end
   end
 
-  def update_history
-    history[round_number] = { 
-      human.name => human.move.value, 
-      computer.name => computer.move.value
-    }
-  end
+  # def update_history
+  #   history[round_number] = { 
+  #     human.name => human.move.value, 
+  #     computer.name => computer.move.value
+  #   }
+  # end
 
   def update_score
     round_winner.score += ONE_POINT if round_winner
@@ -177,7 +214,8 @@ class RPSGame
   end
 
   def update_stats
-    update_history
+    history.update(round_number, human, computer)
+    #update_history
     update_score
     update_round_number unless game_won?
   end
@@ -250,7 +288,7 @@ class RPSGame
         set_round_winner
         display_round_winner
         update_stats
-        #display_history
+        display_history
     
         break if game_won?
         reset_round_winner
