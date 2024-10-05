@@ -6,12 +6,11 @@ require 'pry'
 # NEXT:
   - Add clear screen
   - Start yml file for extracting strings
-  - Add press enter to start the next round
-  - Update display when round is won so that accurate score is displayed
 
 # MISC NOTES
  - Should displaying output be its own class?
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
+ - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
 =end
 class Move
   attr_reader :value
