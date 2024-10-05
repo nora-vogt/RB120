@@ -184,6 +184,14 @@ class RPSGame
     puts "#{game_winner.name} has #{WINNING_SCORE} points and wins the game! Congrats!"
   end
 
+  def display_ask_to_continue
+    puts "Press ENTER to continue:"
+    gets
+  end
+
+  def start_next_round
+  end
+
   def reset_round_winner
     self.round_winner = nil
   end
@@ -250,6 +258,7 @@ class RPSGame
     
         break if game_won?
         reset_round_winner
+        display_ask_to_continue
       end
 
       display_game_winner
