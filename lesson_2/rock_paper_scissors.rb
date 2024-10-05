@@ -7,6 +7,7 @@ require 'pry'
   - Add clear screen
   - Start yml file for extracting strings
   - Add press enter to start the next round
+  - Update display when round is won so that accurate score is displayed
 
 # MISC NOTES
  - Should displaying output be its own class?
@@ -108,11 +109,6 @@ class RPSGame
     puts "Thanks for playing Rock, Paper, Scissors! Goodbye!"
   end
   
-  def display_round_number
-    puts "ROUND #{round_number}"
-    puts ''
-  end
-
   def display_moves
     puts
     puts "#{human.name} chose #{human.move}."
@@ -154,17 +150,15 @@ class RPSGame
   def update_stats
     update_history
     update_score
-    update_round_number
+    update_round_number unless game_won?
   end
 
   def display_score
     players = [human, computer]
-    puts
-    players.each do |player|
-      score = player.score
-      puts "#{player.name} has #{score} #{score == 1 ? 'point' : 'points'}."
-    end
-    puts
+    puts "ROUND #{round_number}".center(20, '-')
+    players.each { |player| puts "#{player.name}: #{player.score}" }
+    puts '-' * 20
+    puts ''
   end
 
   def display_history
@@ -180,7 +174,6 @@ class RPSGame
   end
 
   def display_game_winner
-    puts ''
     puts "#{game_winner.name} has #{WINNING_SCORE} points and wins the game! Congrats!"
   end
 
@@ -245,22 +238,25 @@ class RPSGame
     display_welcome_message
 
     loop do
+      display_ask_to_continue
       loop do
-        display_round_number
+        system 'clear'
+        display_score
         human.choose
         computer.choose
         display_moves
         set_round_winner
         display_round_winner
         update_stats
-        display_score
         #display_history
     
         break if game_won?
         reset_round_winner
         display_ask_to_continue
       end
-
+      sleep 2
+      system 'clear'
+      display_score
       display_game_winner
 
       break unless play_again?
