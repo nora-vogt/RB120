@@ -43,9 +43,8 @@ module Printable
   end
 
   def display_score
-    players = [human, computer]
     puts "ROUND #{round_number}".center(20, '-')
-    players.each { |player| puts "#{player.name}: #{player.score}" }
+    [human, computer].each { |player| puts "#{player.name}: #{player.score}" }
     puts '-' * 20
     puts ''
   end
@@ -219,8 +218,7 @@ class RPSGame
   end
 
   def reset_score
-    players = [human, computer]
-    players.each do |player|
+    [human, computer].each do |player|
       player.score = ZERO_POINTS
     end
   end
@@ -237,8 +235,7 @@ class RPSGame
   end
 
   def game_won?
-    players = [human, computer]
-    players.any? do |player|
+    [human, computer].any? do |player|
       self.game_winner = player if player.score == WINNING_SCORE
     end
   end
@@ -268,7 +265,7 @@ class RPSGame
         set_round_winner
         display_round_winner
         update_stats
-        history.display
+        #history.display
     
         break if game_won?
         reset_round_winner
