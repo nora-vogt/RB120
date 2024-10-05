@@ -19,9 +19,30 @@ RPSGame
  - Should displaying output be its own class?
 
 # CURRENT: 
--add a class for each move
-- the Move class could initialize with @value set to a collaborator object - Rock, Paper, etc.
-  - use the strings to choose the class?
+As long as the user doesn't quit, keep track of a history of moves by both the human and computer. What data structure will you reach for? Will you use a new class, or an existing class? What will the display output look like?
+
+- add tracking of round, to be able to display move according to round
+- Ask user before choosing a move if they would like to see the move history.
+
+{ round 1: {human => rock, computer => scissors}, round 2: {...}}
+
+{ human: {round1 => rock, round2 => spock}, computer: {round1 => scissors, round2 => lizard} }
+
+<Human object, @name..., @history {round1 => rock, round => spock, ...}
+
+To see all history
+iterate through a hash of players [human, computer]
+#{player} move list is:
+Round 1 - Rock
+Round 2 - Spock
+
+#{computer} move list is:
+Round 1 - 
+
+OR: Game has a History
+- store in a Hash
+  - round number is the key, value is a hash {human: rock, computer: scissors}
+
 
 # NEXT:
   - Add clear screen
@@ -100,7 +121,8 @@ end
 
 # Game Orchestration Engine
 class RPSGame
-  attr_accessor :human, :computer, :round_winner, :game_winner
+  attr_accessor :human, :computer, :round_number, :round_winner, :game_winner, 
+                :history
 
   ONE_POINT = 1
   ZERO_POINTS = 0
@@ -109,8 +131,10 @@ class RPSGame
   def initialize
     @human = Human.new
     @computer = Computer.new
+    @round_number = 1
     @round_winner = nil
     @game_winner = nil
+    @history = {}
   end
 
   def display_welcome_message
@@ -119,6 +143,11 @@ class RPSGame
 
   def display_goodbye_message
     puts "Thanks for playing Rock, Paper, Scissors! Goodbye!"
+  end
+  
+  def display_round_number
+    puts "ROUND #{round_number}"
+    puts ''
   end
 
   def display_moves
@@ -146,6 +175,15 @@ class RPSGame
 
   def update_score
     round_winner.score += ONE_POINT if round_winner
+  end
+
+  def update_round_number
+    self.round_number += 1
+  end
+
+  def update_stats
+    update_score
+    update_round_number
   end
 
   def display_score
@@ -178,9 +216,14 @@ class RPSGame
     end
   end
 
+  def reset_round_number
+    self.round_number = 1
+  end
+
   def reset_game
     reset_score
     reset_game_winner
+    reset_round_number
   end
 
   def game_won?
@@ -207,12 +250,13 @@ class RPSGame
 
     loop do
       loop do
+        display_round_number
         human.choose
         computer.choose
         display_moves
         set_round_winner
         display_round_winner
-        update_score
+        update_stats
         display_score
         reset_round_winner
         break if game_won?
