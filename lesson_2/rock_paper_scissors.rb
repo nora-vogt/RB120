@@ -27,6 +27,12 @@ module Printable
     puts "Thanks for playing Rock, Paper, Scissors! Goodbye!"
   end
 
+  def display_computer_choices(computers)
+    computers.each.with_index(1) do |computer, number|
+      puts "#{number}. #{computer}"
+    end
+  end
+
   def display_moves
     puts
     puts "#{human.name} chose #{human.move}."
@@ -123,12 +129,38 @@ class Computer < Player
     @history = history
   end
 
-  def set_name
-    self.name = ['R2D2', 'Hal', 'Chappie', 'Mosscap', 'ART'].sample
-  end
-
   def choose
     self.move = Move.new(Move::VALUES.sample)
+  end
+end
+
+class R2D2 < Computer
+  def set_name
+    self.name = 'R2D2'
+  end
+end
+
+class Hal < Computer
+  def set_name
+    self.name = 'Hal'
+  end
+end
+
+class Chappie < Computer
+  def set_name
+    self.name = 'Chappie'
+  end
+end
+
+class Mosscap < Computer
+  def set_name
+    self.name = 'Mosscap'
+  end
+end
+
+class ART < Computer
+  def set_name
+    self.name = 'ART'
   end
 end
 
@@ -177,10 +209,26 @@ class RPSGame
   def initialize
     @history = History.new
     @human = Human.new
-    @computer = Computer.new(opponent, history)
+    @computer = choose_computer.new(opponent, history)
     @round_number = 1
     @round_winner = nil
     @game_winner = nil 
+  end
+
+  def choose_computer
+    system 'clear'
+    computers = Computer.subclasses << 'Choose randomly!'
+
+    puts "Choose your opponent. Enter a number 1-6:"
+    choice = ''
+    loop do
+      display_computer_choices(computers)
+      choice = gets.strip
+      break if ['1', '2', '3', '4', '5', '6'].include?(choice)
+      puts "Invalid choice. Enter a number 1-6:"
+    end
+
+    choice == '6' ? computers[0..-2].sample : computers[choice.to_i - 1]
   end
 
   def set_round_winner
