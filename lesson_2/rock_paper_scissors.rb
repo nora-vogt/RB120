@@ -115,15 +115,16 @@ class Human < Player
 end
 
 class Computer < Player
-  attr_reader :history
+  attr_reader :history, :opponent
 
-  def initialize(history)
+  def initialize(opponent, history)
     super()
+    @opponent = opponent
     @history = history
   end
 
   def set_name
-    self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
+    self.name = ['R2D2', 'Hal', 'Chappie', 'Mosscap', 'ART'].sample
   end
 
   def choose
@@ -167,7 +168,7 @@ class RPSGame
   include Printable
 
   attr_accessor :human, :computer, :round_number, :round_winner, :game_winner, 
-                :history
+                :opponent, :history
 
   ONE_POINT = 1
   ZERO_POINTS = 0
@@ -176,7 +177,7 @@ class RPSGame
   def initialize
     @history = History.new
     @human = Human.new
-    @computer = Computer.new(history)
+    @computer = Computer.new(opponent, history)
     @round_number = 1
     @round_winner = nil
     @game_winner = nil 
