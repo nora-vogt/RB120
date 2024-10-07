@@ -1,17 +1,14 @@
 require 'pry'
 =begin
 # CURRENT: 
-# Make history display more of a table
-  # when to ask user if they want to see the history?
+- implement different computer personalities
 
-#Computer personalities
-
-We have a list of robot names for our Computer class, but other than the name, there's really nothing different about each of them. It'd be interesting to explore how to build different personalities for each robot. For example, R2D2 can always choose "rock". Or, "Hal" can have a very high tendency to choose "scissors", and rarely "rock", but never "paper". You can come up with the rules or personalities for each robot. How would you approach a feature like this?
 
 
 # NEXT:
+# Make history display more of a table
+  # when to ask user if they want to see the history?
   - Start yml file for extracting strings
-  - At start of game, choose computer opponent, or choose randomly
 
 # MISC NOTES
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
@@ -129,7 +126,7 @@ class Computer < Player
     @history = history
   end
 
-  def choose
+  def choose_randomly
     self.move = Move.new(Move::VALUES.sample)
   end
 end
@@ -138,11 +135,18 @@ class R2D2 < Computer
   def set_name
     self.name = 'R2D2'
   end
+
+  def choose
+  end
 end
 
 class Hal < Computer
   def set_name
     self.name = 'Hal'
+  end
+
+  def choose
+    binding.pry
   end
 end
 
@@ -150,17 +154,33 @@ class Chappie < Computer
   def set_name
     self.name = 'Chappie'
   end
+
+  def choose
+    if history.move_log.empty?
+      choose_randomly
+    else
+      binding.pry
+    end
+  end
 end
 
 class Mosscap < Computer
   def set_name
     self.name = 'Mosscap'
   end
+
+  def choose
+    self.move = Move.new(['lizard', 'rock', 'paper'].sample)
+  end
 end
 
 class ART < Computer
   def set_name
     self.name = 'ART'
+  end
+
+  def choose
+    choose_randomly
   end
 end
 
