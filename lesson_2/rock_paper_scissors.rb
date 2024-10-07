@@ -253,21 +253,15 @@ class RPSGame
   end
 
   def play_round
-    loop do
-      system 'clear'
-      display_score
-      human.choose
-      computer.choose
-      display_moves
-      set_round_winner
-      display_round_winner
-      update_stats
-      #history.display
-  
-      break if game_won?
-      reset_round_winner
-      prompt_to_continue
-    end
+    system 'clear'
+    display_score
+    human.choose
+    computer.choose
+    display_moves
+    set_round_winner
+    display_round_winner
+    update_stats
+    #history.display
   end
 
   def play
@@ -275,7 +269,14 @@ class RPSGame
     display_welcome_message
     prompt_to_continue
     loop do
-      play_round
+      loop do
+        play_round
+        
+        break if game_won?
+        reset_round_winner
+        prompt_to_continue
+      end
+
       prompt_to_continue
       system 'clear'
       display_score
