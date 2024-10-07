@@ -16,7 +16,7 @@ We have a list of robot names for our Computer class, but other than the name, t
 # MISC NOTES
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
- - display a welcome message before choosing a name
+ - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
 =end
 module Printable
   def display_welcome_message
@@ -252,26 +252,31 @@ class RPSGame
     answer == 'y'
   end
 
+  def play_round
+    loop do
+      system 'clear'
+      display_score
+      human.choose
+      computer.choose
+      display_moves
+      set_round_winner
+      display_round_winner
+      update_stats
+      #history.display
+  
+      break if game_won?
+      reset_round_winner
+      prompt_to_continue
+    end
+  end
+
   def play
+    system 'clear'
     display_welcome_message
     prompt_to_continue
     loop do
-      loop do
-        system 'clear'
-        display_score
-        human.choose
-        computer.choose
-        display_moves
-        set_round_winner
-        display_round_winner
-        update_stats
-        #history.display
-    
-        break if game_won?
-        reset_round_winner
-        prompt_to_continue
-      end
-      sleep 2
+      play_round
+      prompt_to_continue
       system 'clear'
       display_score
       display_game_winner(WINNING_SCORE)
