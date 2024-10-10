@@ -1,10 +1,7 @@
 require 'pry'
 =begin
 # CURRENT: 
-- implement different computer personalities
-  - left off in Chappie#choose opponent's last move
-    - right now, it is pulling the move from the same round (opponent.move)
-    - need to pull the LAST round
+- Hal and R2D2
 
 
 # NEXT:
