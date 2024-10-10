@@ -146,7 +146,12 @@ class Hal < Computer
   end
 
   def choose
-    binding.pry
+    case rand(100)
+    when 0..75
+      self.move = Move.new(['rock', 'scissors'].sample)
+    else
+      self.move = Move.new(['paper', 'lizard', 'spock'].sample)
+    end
   end
 end
 
@@ -181,11 +186,11 @@ class Chappie < Computer
   end
 
   def choose
-    if history.move_log.empty? # If round 1, choose randomly
+    if history.move_log.empty? # if round 1, choose randomly
       choose_randomly
-    elsif lost_last_two_rounds? # If lost last 2 rounds, choose to beat the opponent's last move
+    elsif lost_last_two_rounds? # elsif lost last 2 rounds, choose option that beats opponent's last move
       beat_opponents_last_move
-    else # Choose the user's last move
+    else # otherwise copy the user's last move
       copy_opponents_last_move
     end
   end
@@ -221,7 +226,7 @@ class History
   def update(human, computer, round_winner)
     move_log << { human.name => human.move.value, 
                   computer.name => computer.move.value, 
-                  'Winner' => (round_winner ? round_winner.name : 'Tie')}
+                  'Winner' => (round_winner ? round_winner.name : 'Tie') }
   end
 
   def display
@@ -237,7 +242,7 @@ class History
   end
 
   def reset
-    self.move_log = {}
+    self.move_log = []
   end
 
   # def last_round_winner
