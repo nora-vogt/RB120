@@ -2,7 +2,9 @@ require 'pry'
 =begin
 # CURRENT: 
 - implement different computer personalities
-
+  - left off in Chappie#choose opponent's last move
+    - right now, it is pulling the move from the same round (opponent.move)
+    - need to pull the LAST round
 
 
 # NEXT:
@@ -159,22 +161,35 @@ class Chappie < Computer
   def lost_last_two_rounds?
     last_two_rounds = history.move_log.last(2)
     return false if last_two_rounds.size < 2
-    
+
     last_two_rounds.all? { |round| round['Winner'] == opponent.name }
   end
 
-  def choose_opponents_move
-    self.move = Move.new(opponent.move.value)
+  def find_opponents_last_move
+    history.move_log.last[opponent.name]
+  end
+
+  def copy_opponents_last_move
+    last_move = find_opponents_last_move
+    self.move = Move.new(last_move)
+  end
+
+  def beat_opponents_last_move
+    last_move = find_opponents_last_move
+    beats_last_move = Move::WIN_COMBINATIONS.select do |_, value| 
+      value.include?(last_move)
+    end.keys
+
+    self.move = Move.new(beats_last_move.sample)
   end
 
   def choose
     if history.move_log.empty? # If round 1, choose randomly
       choose_randomly
-    elsif lost_last_two_rounds? # If chappie has lost the last two rounds
-      puts 'Lost last two rounds!'
-      binding.pry
+    elsif lost_last_two_rounds? # If lost last 2 rounds, choose to beat the opponent's last move
+      beat_opponents_last_move
     else # Choose the user's last move
-      choose_opponents_move
+      copy_opponents_last_move
     end
   end
 end
@@ -228,10 +243,10 @@ class History
     self.move_log = {}
   end
 
-  def last_round_winner
-    last_round = move_log.size
-    move_log[last_round - 1]['Winner']
-  end
+  # def last_round_winner
+  #   last_round = move_log.size
+  #   move_log[last_round - 1]['Winner']
+  # end
 end
 
 # Game Orchestration Engine
