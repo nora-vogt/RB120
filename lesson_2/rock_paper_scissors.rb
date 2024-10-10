@@ -14,6 +14,7 @@ require 'pry'
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
  - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
+ - anytime 'Spock' is displayed, make it capitalized
 =end
 module Printable
   def display_welcome_message
@@ -155,11 +156,25 @@ class Chappie < Computer
     self.name = 'Chappie'
   end
 
+  def lost_last_two_rounds?
+    last_two_rounds = history.move_log.last(2)
+    return false if last_two_rounds.size < 2
+    
+    last_two_rounds.all? { |round| round['Winner'] == opponent.name }
+  end
+
+  def choose_opponents_move
+    self.move = Move.new(opponent.move.value)
+  end
+
   def choose
-    if history.move_log.empty?
+    if history.move_log.empty? # If round 1, choose randomly
       choose_randomly
-    else
+    elsif lost_last_two_rounds? # If chappie has lost the last two rounds
+      puts 'Lost last two rounds!'
       binding.pry
+    else # Choose the user's last move
+      choose_opponents_move
     end
   end
 end
@@ -188,14 +203,13 @@ class History
   attr_accessor :move_log
 
   def initialize
-    @move_log = {}
+    @move_log = []
   end
 
-  def update(round_number, human, computer)
-    self.move_log[round_number] = { 
-      human.name => human.move.value, 
-      computer.name => computer.move.value
-    }
+  def update(human, computer, round_winner)
+    move_log << { human.name => human.move.value, 
+                  computer.name => computer.move.value, 
+                  'Winner' => (round_winner ? round_winner.name : 'Tie')}
   end
 
   def display
@@ -213,6 +227,11 @@ class History
   def reset
     self.move_log = {}
   end
+
+  def last_round_winner
+    last_round = move_log.size
+    move_log[last_round - 1]['Winner']
+  end
 end
 
 # Game Orchestration Engine
@@ -220,17 +239,17 @@ class RPSGame
   include Printable
 
   attr_accessor :human, :computer, :round_number, :round_winner, :game_winner, 
-                :opponent, :history
+                :history
 
   ONE_POINT = 1
   ZERO_POINTS = 0
   WINNING_SCORE = 5
 
   def initialize
+    @round_number = 1
     @history = History.new
     @human = Human.new
-    @computer = choose_computer.new(opponent, history)
-    @round_number = 1
+    @computer = choose_computer.new(human, history)
     @round_winner = nil
     @game_winner = nil 
   end
@@ -268,7 +287,7 @@ class RPSGame
   end
 
   def update_stats
-    history.update(round_number, human, computer) 
+    history.update(human, computer, round_winner) 
     update_score
     update_round_number unless game_won?
   end
