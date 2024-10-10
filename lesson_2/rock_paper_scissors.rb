@@ -194,10 +194,6 @@ class Chappie < Computer
 
   def beat_opponents_last_move
     last_move = find_opponents_last_move
-    # beats_last_move = Move::WIN_COMBINATIONS.select do |_, value| 
-    #   value.include?(last_move)
-    # end.keys
-
     self.move = Move.new(find_moves_to_beat(last_move).sample)
   end
 
