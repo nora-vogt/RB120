@@ -129,6 +129,16 @@ class Computer < Player
   def choose_randomly
     self.move = Move.new(Move::VALUES.sample)
   end
+
+  def find_opponents_last_move
+    history.move_log.last[opponent.name]
+  end
+
+  def find_moves_to_beat(other_move)
+    Move::WIN_COMBINATIONS.select do |_, losing_moves| 
+      losing_moves.include?(other_move)
+    end.keys
+  end
 end
 
 class R2D2 < Computer
@@ -136,7 +146,17 @@ class R2D2 < Computer
     self.name = 'R2D2'
   end
 
+  def beat_opponents_first_move
+    first_move = history.move_log[0][opponent.name]
+    self.move = Move.new(find_moves_to_beat(first_move).sample)
+  end
+
   def choose
+    if history.first_round?
+      choose_randomly
+    else
+      beat_opponents_first_move
+    end
   end
 end
 
@@ -150,7 +170,7 @@ class Hal < Computer
     when 0..75
       self.move = Move.new(['rock', 'scissors'].sample)
     else
-      self.move = Move.new(['paper', 'lizard', 'spock'].sample)
+      self.move = Move.new(['paper', 'lizard'].sample)
     end
   end
 end
@@ -167,10 +187,6 @@ class Chappie < Computer
     last_two_rounds.all? { |round| round['Winner'] == opponent.name }
   end
 
-  def find_opponents_last_move
-    history.move_log.last[opponent.name]
-  end
-
   def copy_opponents_last_move
     last_move = find_opponents_last_move
     self.move = Move.new(last_move)
@@ -178,15 +194,15 @@ class Chappie < Computer
 
   def beat_opponents_last_move
     last_move = find_opponents_last_move
-    beats_last_move = Move::WIN_COMBINATIONS.select do |_, value| 
-      value.include?(last_move)
-    end.keys
+    # beats_last_move = Move::WIN_COMBINATIONS.select do |_, value| 
+    #   value.include?(last_move)
+    # end.keys
 
-    self.move = Move.new(beats_last_move.sample)
+    self.move = Move.new(find_moves_to_beat(last_move).sample)
   end
 
   def choose
-    if history.move_log.empty? # if round 1, choose randomly
+    if history.first_round? # if round 1, choose randomly
       choose_randomly
     elsif lost_last_two_rounds? # elsif lost last 2 rounds, choose option that beats opponent's last move
       beat_opponents_last_move
@@ -221,6 +237,10 @@ class History
 
   def initialize
     @move_log = []
+  end
+
+  def first_round?
+    move_log.empty?
   end
 
   def update(human, computer, round_winner)
