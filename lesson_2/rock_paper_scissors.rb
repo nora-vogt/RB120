@@ -1,8 +1,7 @@
 require 'pry'
 =begin
 # CURRENT: 
-- Hal and R2D2
-
+ - anytime 'Spock' is displayed, make it capitalized
 
 # NEXT:
 # Make history display more of a table
@@ -13,7 +12,6 @@ require 'pry'
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
  - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
- - anytime 'Spock' is displayed, make it capitalized
 =end
 module Printable
   def display_welcome_message
@@ -52,8 +50,8 @@ module Printable
     puts ''
   end
 
-  def display_game_winner(winning_score)
-    puts "#{game_winner.name} has #{winning_score} points and wins the game! Congrats!"
+  def display_game_winner
+    puts "#{game_winner.name} has #{RPSGame::WINNING_SCORE} points and wins the game! Congrats!"
   end
 end
 
@@ -401,7 +399,7 @@ class RPSGame
       prompt_to_continue
       system 'clear'
       display_score
-      display_game_winner(WINNING_SCORE)
+      display_game_winner
 
       break unless play_again?
       reset_game
