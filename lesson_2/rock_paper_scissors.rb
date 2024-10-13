@@ -268,11 +268,6 @@ class History
   def even_numbered_round?
     (move_log.size + 1).even?
   end
-
-  # def last_round_winner
-  #   last_round = move_log.size
-  #   move_log[last_round - 1]['Winner']
-  # end
 end
 
 # Game Orchestration Engine
