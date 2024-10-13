@@ -14,7 +14,7 @@ require 'pry'
  - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
 =end
 
-module Printable
+module Display
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
   end
@@ -223,7 +223,11 @@ class ART < Computer
   end
 
   def choose
-    choose_randomly
+    if history.even_numbered_round?
+      choose_randomly
+    else
+      self.move = Move.new('rock')
+    end
   end
 end
 
@@ -232,10 +236,6 @@ class History
 
   def initialize
     @move_log = []
-  end
-
-  def first_round?
-    move_log.empty?
   end
 
   def update(human, computer, round_winner)
@@ -261,6 +261,14 @@ class History
     self.move_log = []
   end
 
+  def first_round?
+    move_log.empty?
+  end
+
+  def even_numbered_round?
+    (move_log.size + 1).even?
+  end
+
   # def last_round_winner
   #   last_round = move_log.size
   #   move_log[last_round - 1]['Winner']
@@ -269,7 +277,7 @@ end
 
 # Game Orchestration Engine
 class RPSGame
-  include Printable
+  include Display
 
   attr_accessor :human, :computer, :round_number, :round_winner, :game_winner, 
                 :history
