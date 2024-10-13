@@ -2,6 +2,7 @@ require 'pry'
 =begin
 # CURRENT: 
  - anytime 'Spock' is displayed, make it capitalized
+ - make different Display modules for the classes that will use those methods
 
 # NEXT:
 # Make history display more of a table
