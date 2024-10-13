@@ -1,7 +1,7 @@
 require 'pry'
 =begin
 # CURRENT: 
-  - add abbreviations to move choices
+
 
 # NEXT:
 # Make history display more of a table
@@ -35,6 +35,14 @@ module GameDisplay
     puts "#{computer.name} chose #{computer.move}."
   end
 
+  def display_round_action
+    return if round_winner.nil?
+    action = determine_action
+    round_loser = determine_round_loser
+    puts ''
+    puts "#{round_winner.move} #{action} #{round_loser.move}!"
+  end
+
   def display_round_winner
     puts
     if round_winner
@@ -55,6 +63,7 @@ module GameDisplay
     puts "#{game_winner.name} has #{self.class::WINNING_SCORE} points and wins the game! Congrats!"
   end
 end
+
 
 class Move
   attr_reader :value
@@ -80,7 +89,7 @@ class Move
   end
 
   def to_s
-    @value == 'spock' ? 'Spock' : @value
+    @value.capitalize
   end
 end
 
@@ -329,6 +338,36 @@ class RPSGame
     end
   end
 
+  def determine_round_loser
+    round_winner == human ? computer : human
+  end
+
+  def determine_action
+    return if round_winner.nil?
+    round_loser = determine_round_loser
+    moves = [round_winner.move.value, round_loser.move.value]
+
+    case moves
+    when %w(scissors paper)  then 'cuts'
+    when %w(paper rock)      then 'covers' 
+    when %w(rock lizard)     then 'crushes'
+    when %w(lizard spock)    then 'poisons'
+    when %w(spock scissors)  then 'smashes'
+    when %w(scissors lizard) then 'decapitates'
+    when %w(lizard paper)    then 'eats'
+    when %w(paper spock)     then 'disproves'
+    when %w(spock rock)      then 'vaporizes'
+    when %w(rock scissors)   then 'crushes'
+    end
+  end
+
+  # def display_round_action
+  #   action = determine_action
+  #   round_loser = determine_round_loser
+  #   puts ''
+  #   puts "#{round_winner.move} #{action} #{round_loser.move}!"
+  # end
+
   def update_score
     round_winner.score += ONE_POINT if round_winner
   end
@@ -368,9 +407,14 @@ class RPSGame
 
   def reset_game
     reset_score
+    reset_round_winner
     reset_game_winner
     reset_round_number
     history.reset
+  end
+
+  def tie?
+    round_winner.nil?
   end
 
   def game_won?
@@ -398,6 +442,7 @@ class RPSGame
     computer.choose
     display_moves
     set_round_winner
+    display_round_action
     display_round_winner
     update_stats
     #history.display
