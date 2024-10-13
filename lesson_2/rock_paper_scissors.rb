@@ -14,7 +14,7 @@ require 'pry'
  - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
 =end
 
-module Display
+module GameDisplay
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
   end
@@ -52,7 +52,7 @@ module Display
   end
 
   def display_game_winner
-    puts "#{game_winner.name} has #{RPSGame::WINNING_SCORE} points and wins the game! Congrats!"
+    puts "#{game_winner.name} has #{self.class::WINNING_SCORE} points and wins the game! Congrats!"
   end
 end
 
@@ -272,7 +272,7 @@ end
 
 # Game Orchestration Engine
 class RPSGame
-  include Display
+  include GameDisplay
 
   attr_accessor :human, :computer, :round_number, :round_winner, :game_winner, 
                 :history
