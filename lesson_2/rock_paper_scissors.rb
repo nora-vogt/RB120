@@ -14,6 +14,7 @@ require 'pry'
  - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
  - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
 =end
+
 module Printable
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
@@ -79,7 +80,7 @@ class Move
   end
 
   def to_s
-    @value
+    @value == 'spock' ? 'Spock' : @value
   end
 end
 
@@ -247,10 +248,11 @@ class History
   def display
     puts ''
     puts 'GAME HISTORY:'
-    move_log.each do |round, data|
-      puts "Round #{round}:"
-      data.each do |player, move|
-        puts "#{player} - #{move}"
+    move_log.each_with_index do |round_data, index|
+      puts "Round #{index + 1}:"
+      # the hash also contains 'winner' => outcome; need better block param names
+      round_data.each do |player, move|
+        puts "#{player} - #{move == 'spock' ? move.capitalize : move }"
       end
       puts ''
     end
