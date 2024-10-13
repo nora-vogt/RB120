@@ -1,7 +1,8 @@
 require 'pry'
 =begin
 # CURRENT: 
-
+  - want to edit the play loop, extract playing the game to a method. does #play_game make sense?
+   - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
 
 # NEXT:
 # Make history display more of a table
@@ -10,7 +11,7 @@ require 'pry'
 
 # MISC NOTES
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
- - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
+
 =end
 
 module GameDisplay
