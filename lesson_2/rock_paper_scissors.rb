@@ -1,7 +1,7 @@
 require 'pry'
 =begin
 # CURRENT: 
- - make different Display modules for the classes that will use those methods
+  - add abbreviations to move choices
 
 # NEXT:
 # Make history display more of a table
@@ -60,6 +60,7 @@ class Move
   attr_reader :value
 
   VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+  ABBREVIATIONS = ['r', 'p', 'sc', 'l', 'sp']
   WIN_COMBINATIONS = { 'rock' => ['scissors', 'lizard'],
                        'paper' => ['rock', 'spock'],
                        'scissors' => ['paper', 'lizard'],
@@ -104,15 +105,29 @@ class Human < Player
     self.name = human_name
   end
 
-  def choose
+  def get_choice
     choice = nil
+
     loop do
-      puts "Please choose rock, paper, scissors, lizard, or Spock:"
+      puts "Please choose rock, paper, scissors, lizard, or Spock (r, p, sc, l, sp):"
       choice = gets.strip.downcase
-      break if Move::VALUES.include?(choice)
-      puts "Sorry, invalid choice."
+      break if (Move::VALUES + Move::ABBREVIATIONS).include?(choice)
+      if choice == 's'
+        puts "Enter 'sc' for scissors or 'sp' for Spock."
+      else
+        puts "Sorry, invalid choice."
+      end
     end
-    self.move = Move.new(choice)
+    
+    if Move::ABBREVIATIONS.include?(choice)
+      Move::VALUES.find { |move| move.start_with?(choice) }
+    else
+      choice
+    end
+  end
+
+  def choose
+    self.move = Move.new(get_choice)
   end
 end
 
