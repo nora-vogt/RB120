@@ -10,7 +10,6 @@ require 'pry'
 
 # MISC NOTES
  - Can add @game_number to RPSGame, edit history to show Game# and Round#, then delete #reset_history
- - Add "verb" move output after moves are chosen from http://www.samkass.com/theories/RPSSL.html
  - display a welcome message before choosing a name -- maybe use some kind of GameSetup class, choose name, opponent, see rules, etc, and within that class call RPSGame.new.play?
 =end
 
@@ -35,22 +34,24 @@ module GameDisplay
     puts "#{computer.name} chose #{computer.move}."
   end
 
-  def display_round_action
+  def display_winning_move_action
     return if round_winner.nil?
     action = determine_action
     round_loser = determine_round_loser
-    puts ''
+
     puts "#{round_winner.move} #{action} #{round_loser.move}!"
   end
 
-  def display_round_winner
+  def display_round_outcome
     puts
     if round_winner
+      display_winning_move_action
       puts "#{round_winner.name} won!"
     else
       puts "It's a tie! No points are awarded."
     end
   end
+
 
   def display_score
     puts "ROUND #{round_number}".center(20, '-')
@@ -361,13 +362,6 @@ class RPSGame
     end
   end
 
-  # def display_round_action
-  #   action = determine_action
-  #   round_loser = determine_round_loser
-  #   puts ''
-  #   puts "#{round_winner.move} #{action} #{round_loser.move}!"
-  # end
-
   def update_score
     round_winner.score += ONE_POINT if round_winner
   end
@@ -442,8 +436,7 @@ class RPSGame
     computer.choose
     display_moves
     set_round_winner
-    display_round_action
-    display_round_winner
+    display_round_outcome
     update_stats
     #history.display
   end
