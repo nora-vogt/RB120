@@ -1,0 +1,8 @@
+welcome: "Welcome to Tic-Tac-Toe!"
+markers: "You're %{human}. Computer is %{computer}."
+choose: "Choose a square (%{numbers}):"
+invalid_choice: "Sorry, that's not a valid choice."
+human_won: "You won!"
+computer_won: "The computer won! Better luck next time."
+tie: "It's a tie!"
+goodbye: "Thanks for playing Tic-Tac-Toe! Goodbye!"
