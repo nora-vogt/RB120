@@ -400,7 +400,7 @@ class RPSGame
     self.round_number = 1
   end
 
-  def reset_game
+  def reset
     reset_score
     reset_round_winner
     reset_game_winner
@@ -461,7 +461,7 @@ class RPSGame
       display_game_winner
 
       break unless play_again?
-      reset_game
+      reset
     end
 
     display_goodbye_message
