@@ -224,6 +224,25 @@ class TTTGame
     [human, computer].each(&:set_name)
   end
 
+  def ask_one_two_three_choice
+    loop do
+      choice = gets.chomp
+      return choice if %w(1 2 3).include?(choice)
+      prompt('invalid_number')
+    end
+  end
+
+  def set_human_marker
+    prompt('ask_marker')
+    choice = ask_one_two_three_choice.to_i
+
+    case choice
+    when 1 then human.marker = X_MARKER
+    when 2 then human.marker = O_MARKER
+    when 3 then human.marker = [X_MARKER, O_MARKER].sample
+    end
+  end
+
   def set_computer_marker
     computer.marker = (human.marker == X_MARKER ? O_MARKER : X_MARKER)
   end
@@ -237,35 +256,13 @@ class TTTGame
     sleep 1.5
   end
 
-  def ask_number_choice
-  end
 
-  def set_human_marker
-    prompt('ask_marker')
-    choice = nil
-    loop do
-      choice = gets.chomp
-      break if %w(1 2 3).include?(choice)
-      prompt('invalid_number')
-    end
-
-    case choice.to_i
-    when 1 then human.marker = X_MARKER
-    when 2 then human.marker = O_MARKER
-    when 3 then human.marker = [X_MARKER, O_MARKER].sample
-    end
-  end
 
   def set_current_player
     puts format(MESSAGES['ask_first_player'], computer: computer.name)
-    choice = nil
-    loop do
-      choice = gets.chomp
-      break if %w(1 2 3).include?(choice)
-      prompt('invalid_number')
-    end
+    choice = ask_one_two_three_choice.to_i
 
-    case choice.to_i
+    case choice
     when 1 then @current_player = human
     when 2 then @current_player = computer
     when 3 then @current_player = [human, computer].sample
@@ -292,7 +289,7 @@ class TTTGame
     board[board.unmarked_keys.sample] = computer.marker
   end
 
-  def switch_current_player
+  def alternate_current_player
     @current_player = if @current_player == human
                         computer
                       else
@@ -307,7 +304,7 @@ class TTTGame
       computer_moves
     end
 
-    switch_current_player
+    alternate_current_player
   end
 
   def human_turn?
