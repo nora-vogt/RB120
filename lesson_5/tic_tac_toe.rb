@@ -220,6 +220,7 @@ class TTTGame
   def display_names
     puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
     puts ""
+    sleep 1.5
   end
 
   def set_current_player
@@ -311,7 +312,7 @@ class TTTGame
       #set_current_player
       set_names
       display_names
-      display_board
+      clear_screen_and_display_board
       player_move
       display_result
       break unless play_again?
