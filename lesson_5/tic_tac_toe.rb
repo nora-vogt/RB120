@@ -224,8 +224,20 @@ class TTTGame
     [human, computer].each(&:set_name)
   end
 
-  def set_current_player
-    #
+  def set_computer_marker
+    computer.marker = (human.marker == X_MARKER ? O_MARKER : X_MARKER)
+  end
+
+  def set_player_markers
+    set_human_marker
+    set_computer_marker
+    puts ""
+    print "Ok! "
+    display_markers
+    sleep 1.5
+  end
+
+  def ask_number_choice
   end
 
   def set_human_marker
@@ -234,7 +246,7 @@ class TTTGame
     loop do
       choice = gets.chomp
       break if %w(1 2 3).include?(choice)
-      prompt('invalid_marker')
+      prompt('invalid_number')
     end
 
     case choice.to_i
@@ -244,15 +256,23 @@ class TTTGame
     end
   end
 
-  def set_computer_marker
-    computer.marker = (human.marker == X_MARKER ? O_MARKER : X_MARKER)
-  end
+  def set_current_player
+    puts format(MESSAGES['ask_first_player'], computer: computer.name)
+    choice = nil
+    loop do
+      choice = gets.chomp
+      break if %w(1 2 3).include?(choice)
+      prompt('invalid_number')
+    end
 
-  def set_player_markers
-    set_human_marker
-    set_computer_marker
+    case choice.to_i
+    when 1 then @current_player = human
+    when 2 then @current_player = computer
+    when 3 then @current_player = [human, computer].sample
+    end
+
     puts ""
-    puts "Ok. You're #{human.marker}!"
+    puts format(MESSAGES['first_player'], player: @current_player.name)
     sleep 1.5
   end
 
@@ -317,10 +337,7 @@ class TTTGame
 
   def reset
     board.reset
-
-    # shouldn't need this, will re-initialize when a new game starts
-    # so delete when making this change
-    @current_player = human
+    #@current_player = human
     clear
   end
 
@@ -335,9 +352,9 @@ class TTTGame
   def main_game
     set_player_names
     loop do
-      #set_current_player
       display_player_names
       set_player_markers
+      set_current_player
       clear_screen_and_display_board
       player_move
       display_result
