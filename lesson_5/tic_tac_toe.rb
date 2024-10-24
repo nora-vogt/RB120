@@ -120,6 +120,7 @@ class Human < Player
     loop do
       name = gets.strip
       break unless name.empty?
+      prompt('invalid_name')
     end
 
     self.name = name
@@ -217,7 +218,7 @@ class TTTGame
     end
   end
 
-  def display_names
+  def display_player_names
     puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
     puts ""
     sleep 1.5
@@ -227,7 +228,7 @@ class TTTGame
     #
   end
 
-  def set_names
+  def set_player_names
     [human, computer].each(&:set_name)
   end
 
@@ -310,8 +311,8 @@ class TTTGame
   def main_game
     loop do
       #set_current_player
-      set_names
-      display_names
+      set_player_names
+      display_player_names
       clear_screen_and_display_board
       player_move
       display_result
