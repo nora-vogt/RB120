@@ -256,8 +256,6 @@ class TTTGame
     sleep 1.5
   end
 
-
-
   def set_current_player
     puts format(MESSAGES['ask_first_player'], computer: computer.name)
     choice = ask_one_two_three_choice.to_i
@@ -277,12 +275,12 @@ class TTTGame
     display_move_options
     square = nil
     loop do
-      square = gets.chomp.to_i
-      break if board.unmarked_keys.include?(square)
+      square = gets.chomp
+      break if board.unmarked_keys.map(&:to_s).include?(square)
       prompt('invalid_choice')
     end
 
-    board[square] = human.marker
+    board[square.to_i] = human.marker
   end
 
   def computer_moves
