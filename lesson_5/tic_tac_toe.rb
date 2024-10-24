@@ -8,23 +8,32 @@ class Board
                    [1, 4, 7], [2, 5, 8], [3, 6, 9], # cols
                    [1, 5, 9], [3, 5, 7]             # diagonals
   ]
-  attr_reader :squares
 
   def initialize
     @squares = {}
     reset
   end
 
-  def get_square_at(key)
-    squares[key] # returns a Square object
+  def []=(num, marker)
+    @squares[num].marker = marker
   end
 
-  def set_square_at(key, marker)
-    squares[key].marker = marker
+  def draw
+    puts "     |     |"
+    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}  "
+    puts "     |     |"
+    puts "-----+-----+-----"
+    puts "     |     |"
+    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}  "
+    puts "     |     |"
+    puts "-----+-----+-----"
+    puts "     |     |"
+    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}  "
+    puts "     |     |"
   end
 
   def unmarked_keys
-    squares.keys.select { |key| squares[key].unmarked? }
+    @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
   def full?
@@ -32,7 +41,7 @@ class Board
   end
 
   def someone_won?
-    !!detect_winner
+    !!winning_marker
   end
 
   def count_human_marker(squares)
@@ -44,9 +53,9 @@ class Board
   end
 
   # returns winning marker or nil
-  def detect_winner
+  def winning_marker
     WINNING_LINES.each do |line|
-      current_squares = squares.values_at(*line)
+      current_squares = @squares.values_at(*line)
       if count_human_marker(current_squares) == 3
         return TTTGame::HUMAN_MARKER
       elsif count_computer_marker(current_squares) == 3
@@ -57,7 +66,7 @@ class Board
   end
 
   def reset
-    (1..9).each { |key| squares[key] = Square.new }
+    (1..9).each { |key| @squares[key] = Square.new }
   end
 end
 
@@ -117,22 +126,16 @@ class TTTGame
                                      computer: computer.marker)
   end
 
-  def display_board(clear = true)
-    system 'clear' if clear
+  def display_board
     display_markers
     puts ""
-    puts "     |     |"
-    puts "  #{board.get_square_at(1)}  |  #{board.get_square_at(2)}  |  #{board.get_square_at(3)}  "
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{board.get_square_at(4)}  |  #{board.get_square_at(5)}  |  #{board.get_square_at(6)}  "
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{board.get_square_at(7)}  |  #{board.get_square_at(8)}  |  #{board.get_square_at(9)}  "
-    puts "     |     |"
+    board.draw
     puts ""
+  end
+
+  def clear_screen_and_display_board
+    clear
+    display_board
   end
 
   def display_move_options
@@ -140,9 +143,9 @@ class TTTGame
   end
 
   def display_result
-    display_board
+    clear_screen_and_display_board
 
-    case board.detect_winner
+    case board.winning_marker
     when human.marker
       prompt('human_won')
     when computer.marker
@@ -162,17 +165,17 @@ class TTTGame
       prompt('invalid_choice')
     end
 
-    board.set_square_at(square, human.marker)
+    board[square] = human.marker
   end
 
   def computer_moves
-    board.set_square_at(board.unmarked_keys.sample, computer.marker)
+    board[board.unmarked_keys.sample] = computer.marker
   end
 
   def play_again?
     answer = nil
     loop do
-      prompt('play_again')
+      prompt('ask_play_again')
       answer = gets.chomp.downcase
       break if %w(y yes n no).include? answer
       prompt('invalid_play_again')
@@ -180,13 +183,27 @@ class TTTGame
 
     ['y', 'yes'].include?(answer)
   end
+  
+  def clear
+    system 'clear'
+  end
+
+  def display_play_again_message
+    prompt('play_again')
+    puts ''
+  end
+
+  def reset
+    board.reset
+    clear
+  end
 
   def play
-    system 'clear'
+    clear
     display_welcome_message
 
     loop do
-      display_board(false)
+      display_board
 
       loop do
         human_moves
@@ -195,14 +212,12 @@ class TTTGame
         computer_moves
         break if board.someone_won? || board.full?
 
-        display_board
+        clear_screen_and_display_board
       end
       display_result
       break unless play_again?
-      board.reset
-      system 'clear'
-      puts "Let's play again!"
-      puts ''
+      reset
+      display_play_again_message
     end
 
     display_goodbye_message
