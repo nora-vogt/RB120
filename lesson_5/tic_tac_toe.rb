@@ -98,10 +98,37 @@ class Square
 end
 
 class Player
-  attr_reader :marker
+  attr_reader :marker, :name
 
   def initialize(marker)
     @marker = marker
+  end
+
+  def prompt(message)
+    puts MESSAGES[message]
+  end
+
+  private
+
+  attr_writer :name
+end
+
+class Human < Player
+  def set_name
+    prompt('ask_name')
+    name = nil
+    loop do
+      name = gets.strip
+      break unless name.empty?
+    end
+
+    self.name = name
+  end
+end
+
+class Computer < Player
+  def set_name
+    self.name = ["Mosscap", "Hal", "Bender"].sample
   end
 end
 
@@ -115,8 +142,8 @@ class TTTGame
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
+    @human = Human.new(HUMAN_MARKER)
+    @computer = Computer.new(COMPUTER_MARKER)
     @current_player = human
   end
 
@@ -146,6 +173,7 @@ class TTTGame
 
   def display_markers
     puts format(MESSAGES['markers'], human: human.marker,
+                                     computer_name: computer.name,
                                      computer: computer.marker)
   end
 
@@ -189,8 +217,17 @@ class TTTGame
     end
   end
 
+  def display_names
+    puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
+    puts ""
+  end
+
   def set_current_player
-    prompt
+    #
+  end
+
+  def set_names
+    [human, computer].each(&:set_name)
   end
 
   def human_moves
@@ -272,6 +309,8 @@ class TTTGame
   def main_game
     loop do
       #set_current_player
+      set_names
+      display_names
       display_board
       player_move
       display_result
