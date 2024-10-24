@@ -111,7 +111,7 @@ class TTTGame
   COMPUTER_MARKER = 'O'
   FIRST_TO_MOVE = HUMAN_MARKER
 
-  attr_reader :board, :human, :computer, :current_marker
+  attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
@@ -119,6 +119,31 @@ class TTTGame
     @computer = Player.new(COMPUTER_MARKER)
     @current_marker = FIRST_TO_MOVE
   end
+
+  def play
+    clear
+    display_welcome_message
+
+    loop do
+      display_board
+      loop do
+        current_player_moves
+        break if board.someone_won? || board.full?
+        clear_screen_and_display_board if human_turn?
+      end
+
+      display_result
+      break unless play_again?
+      reset
+      display_play_again_message
+    end
+
+    display_goodbye_message
+  end
+
+  private
+
+  attr_writer :current_marker
 
   def prompt(message)
     puts MESSAGES[message]
@@ -184,6 +209,14 @@ class TTTGame
     board[board.unmarked_keys.sample] = computer.marker
   end
 
+  def switch_current_marker
+    if @current_marker == HUMAN_MARKER
+      @current_marker = COMPUTER_MARKER
+    else
+      @current_marker = HUMAN_MARKER
+    end
+  end
+
   def current_player_moves
     if human_turn?
       human_moves
@@ -195,7 +228,7 @@ class TTTGame
   end
 
   def human_turn?
-    current_marker == HUMAN_MARKER
+    @current_marker == HUMAN_MARKER
   end
 
   def play_again?
@@ -221,41 +254,8 @@ class TTTGame
 
   def reset
     board.reset
-    self.current_marker = FIRST_TO_MOVE
+    @current_marker = FIRST_TO_MOVE
     clear
-  end
-
-  def play
-    clear
-    display_welcome_message
-
-    loop do
-      display_board
-      loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
-        clear_screen_and_display_board if human_turn?
-      end
-
-      display_result
-      break unless play_again?
-      reset
-      display_play_again_message
-    end
-
-    display_goodbye_message
-  end
-
-  private
-
-  attr_writer :current_marker
-
-  def switch_current_marker
-    if current_marker == HUMAN_MARKER
-      self.current_marker = COMPUTER_MARKER
-    else
-      self.current_marker = HUMAN_MARKER
-    end
   end
 end
 
