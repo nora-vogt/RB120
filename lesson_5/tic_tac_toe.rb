@@ -161,8 +161,19 @@ class TTTGame
     display_board
   end
 
+  def joinor(numbers, delimiter=', ', word='or')
+    case numbers.size
+    when 0 then ''
+    when 1 then numbers[0].to_s
+    when 2 then numbers.join(" #{word} ")
+    else
+      numbers[-1] = "#{word} #{numbers[-1]}"
+      numbers.join(delimiter)
+    end
+  end
+
   def display_move_options
-    puts format(MESSAGES['choose'], numbers: board.unmarked_keys.join(', '))
+    puts format(MESSAGES['choose'], numbers: joinor(board.unmarked_keys))
   end
 
   def display_result
