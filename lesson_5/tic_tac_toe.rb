@@ -232,12 +232,12 @@ class TTTGame
     prompt('ask_marker')
     choice = nil
     loop do
-      choice = gets.to_i
-      break if [1, 2, 3].include?(choice)
+      choice = gets.chomp
+      break if %w(1 2 3).include?(choice)
       prompt('invalid_marker')
     end
 
-    case choice
+    case choice.to_i
     when 1 then human.marker = X_MARKER
     when 2 then human.marker = O_MARKER
     when 3 then human.marker = [X_MARKER, O_MARKER].sample
@@ -333,9 +333,9 @@ class TTTGame
   end
 
   def main_game
+    set_player_names
     loop do
       #set_current_player
-      set_player_names
       display_player_names
       set_player_markers
       clear_screen_and_display_board
