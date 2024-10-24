@@ -60,13 +60,8 @@ class Board
 
   private
 
-  # Maybe refactor this name - or should this be in the Square class?
-  def all_marked?(squares)
-    squares.all?(&:marked?)
-  end
-
   def all_identical_markers?(squares)
-    return false unless all_marked?(squares)
+    return false unless squares.all?(&:marked?)
     squares.all? { |square| square.same_marker?(squares[0]) }
   end
 end
