@@ -44,12 +44,12 @@ class Board
     !!winning_marker
   end
 
-  def all_squares_marked?(squares)
-    squares.all? { |square| square.marked? }
+  def all_marked?(squares)
+    squares.all?(&:marked?)
   end
 
   def all_identical_markers?(squares)
-    return false unless all_squares_marked?(squares)
+    return false unless all_marked?(squares)
     squares.all? { |square| square.same_marker?(squares[0]) }
   end
 
