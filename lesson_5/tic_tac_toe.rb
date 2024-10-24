@@ -98,11 +98,8 @@ class Square
 end
 
 class Player
-  attr_reader :marker, :name
-
-  def initialize(marker)
-    @marker = marker
-  end
+  attr_accessor :marker
+  attr_reader :name
 
   def prompt(message)
     puts MESSAGES[message]
@@ -135,16 +132,15 @@ end
 
 # Orchestration Engine
 class TTTGame
-  HUMAN_MARKER = 'X'
-  COMPUTER_MARKER = 'O'
-  FIRST_TO_MOVE = HUMAN_MARKER
+  X_MARKER = 'X'
+  O_MARKER = 'O'
 
   attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
-    @human = Human.new(HUMAN_MARKER)
-    @computer = Computer.new(COMPUTER_MARKER)
+    @human = Human.new
+    @computer = Computer.new
     @current_player = human
   end
 
@@ -224,12 +220,40 @@ class TTTGame
     sleep 1.5
   end
 
+  def set_player_names
+    [human, computer].each(&:set_name)
+  end
+
   def set_current_player
     #
   end
 
-  def set_player_names
-    [human, computer].each(&:set_name)
+  def set_human_marker
+    prompt('ask_marker')
+    choice = nil
+    loop do
+      choice = gets.to_i
+      break if [1, 2, 3].include?(choice)
+      prompt('invalid_marker')
+    end
+
+    case choice
+    when 1 then human.marker = X_MARKER
+    when 2 then human.marker = O_MARKER
+    when 3 then human.marker = [X_MARKER, O_MARKER].sample
+    end
+  end
+
+  def set_computer_marker
+    computer.marker = (human.marker == X_MARKER ? O_MARKER : X_MARKER)
+  end
+
+  def set_player_markers
+    set_human_marker
+    set_computer_marker
+    puts ""
+    puts "Ok. You're #{human.marker}!"
+    sleep 1.5
   end
 
   def human_moves
@@ -313,6 +337,7 @@ class TTTGame
       #set_current_player
       set_player_names
       display_player_names
+      set_player_markers
       clear_screen_and_display_board
       player_move
       display_result
