@@ -117,7 +117,7 @@ class TTTGame
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
-    @current_marker = FIRST_TO_MOVE
+    @current_player = human
   end
 
   def play
@@ -129,7 +129,7 @@ class TTTGame
 
   private
 
-  attr_writer :current_marker
+  attr_writer :current_player
 
   def prompt(message)
     puts MESSAGES[message]
@@ -189,6 +189,10 @@ class TTTGame
     end
   end
 
+  def set_current_player
+    prompt
+  end
+
   def human_moves
     display_move_options
     square = nil
@@ -205,11 +209,11 @@ class TTTGame
     board[board.unmarked_keys.sample] = computer.marker
   end
 
-  def switch_current_marker
-    @current_marker = if @current_marker == HUMAN_MARKER
-                        COMPUTER_MARKER
+  def switch_current_player
+    @current_player = if @current_player == human
+                        computer
                       else
-                        HUMAN_MARKER
+                        human
                       end
   end
 
@@ -220,11 +224,11 @@ class TTTGame
       computer_moves
     end
 
-    switch_current_marker
+    switch_current_player
   end
 
   def human_turn?
-    @current_marker == HUMAN_MARKER
+    @current_player == human
   end
 
   def play_again?
@@ -250,7 +254,10 @@ class TTTGame
 
   def reset
     board.reset
-    @current_marker = FIRST_TO_MOVE
+
+    # shouldn't need this, will re-initialize when a new game starts
+    # so delete when making this change
+    @current_player = human
     clear
   end
 
@@ -264,6 +271,7 @@ class TTTGame
 
   def main_game
     loop do
+      #set_current_player
       display_board
       player_move
       display_result
