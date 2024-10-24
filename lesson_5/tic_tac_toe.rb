@@ -44,22 +44,32 @@ class Board
     !!winning_marker
   end
 
-  def count_human_marker(squares)
-    squares.map(&:marker).count(TTTGame::HUMAN_MARKER)
+  def all_squares_marked?(squares)
+    squares.all? { |square| square.marked? }
   end
 
-  def count_computer_marker(squares)
-    squares.map(&:marker).count(TTTGame::COMPUTER_MARKER)
+  def all_identical_markers?(squares)
+    return false unless all_squares_marked?(squares)
+    squares.all? { |square| square.same_marker?(squares[0]) }
   end
+
+=begin
+Refactor #winning_marker to not rely on the implementation of the TTTGame class. Instead: check if any marker, not just human or computer, has won. If yes, return that marker.
+
+For each line:
+- get all the squares [array of Square objects]
+- check if the marker for all three squares is the same
+
+- iterate through the line array - all?
+  - check if each square matches the first square marker
+=end
 
   # returns winning marker or nil
   def winning_marker
     WINNING_LINES.each do |line|
-      current_squares = @squares.values_at(*line)
-      if count_human_marker(current_squares) == 3
-        return TTTGame::HUMAN_MARKER
-      elsif count_computer_marker(current_squares) == 3
-        return TTTGame::COMPUTER_MARKER
+      squares = @squares.values_at(*line)
+      if all_identical_markers?(squares)
+        return squares[0].marker
       end
     end
     nil
@@ -85,6 +95,14 @@ class Square
 
   def unmarked?
     marker == INITIAL_MARKER
+  end
+
+  def marked?
+    marker != INITIAL_MARKER
+  end
+
+  def same_marker?(other)
+    marker == other.marker
   end
 end
 
