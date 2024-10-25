@@ -220,6 +220,14 @@ class TTTGame
     sleep 1.5
   end
 
+  def display_computer_moving
+    print "#{computer.name} is moving"
+    %w(. . .).each do |period|
+      sleep 0.5
+      print "."
+    end
+  end
+
   def set_player_names
     [human, computer].each(&:set_name)
   end
@@ -284,6 +292,7 @@ class TTTGame
   end
 
   def computer_moves
+    display_computer_moving
     board[board.unmarked_keys.sample] = computer.marker
   end
 
@@ -338,9 +347,9 @@ class TTTGame
 
   def player_move
     loop do
+      clear_screen_and_display_board
       current_player_moves
       break if board.someone_won? || board.full?
-      clear_screen_and_display_board if human_turn?
     end
   end
 
@@ -350,7 +359,6 @@ class TTTGame
       display_player_names
       set_player_markers
       set_current_player
-      clear_screen_and_display_board
       player_move
       display_result
       break unless play_again?
