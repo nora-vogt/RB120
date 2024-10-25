@@ -3,6 +3,111 @@ require 'pry'
 
 MESSAGES = YAML.load_file('ttt_messages.yml')
 
+module TTTGameDisplay
+  def display_welcome_message
+    prompt('welcome')
+    puts ""
+    puts format(MESSAGES['game_info'], number: TTTGame::WINNING_SCORE)
+    pause(1)
+  end
+
+  def display_goodbye_message
+    prompt('goodbye')
+  end
+
+  def display_round_number
+    puts "ROUND #{@round}".center(20, '-')
+  end
+
+  def display_scoreboard
+    display_round_number
+    [human, computer].each { |player| puts "#{player.name}: #{player.score}" }
+    puts '-' * 20
+    puts ''
+  end
+
+  def display_markers
+    puts format(MESSAGES['markers'], human: human.marker,
+                                     computer_name: computer.name,
+                                     computer: computer.marker)
+  end
+
+  def display_board
+    display_scoreboard
+    display_markers
+    puts ""
+    board.draw
+    puts ""
+  end
+
+  def clear_screen_and_display_board
+    clear
+    display_board
+  end
+
+  def display_move_options
+    puts format(MESSAGES['choose'], numbers: joinor(board.unmarked_keys))
+  end
+
+  def display_round_results
+    clear_screen_and_display_board
+
+    case board.winning_marker
+    when human.marker
+      prompt('human_won_round')
+    when computer.marker
+      puts format(MESSAGES['computer_won_round'], name: computer.name)
+    else
+      prompt('tie')
+    end
+
+    pause 1.5
+  end
+
+  def display_player_names
+    puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
+    puts ""
+    pause(1.5)
+  end
+
+  def display_player_markers
+    puts ""
+    print "Ok! "
+    display_markers
+    pause(1.5)
+  end
+
+  def display_first_player
+    puts ""
+    puts format(MESSAGES['first_player'], player: @current_player.name)
+    pause(1.5)
+  end
+
+  def display_computer_moving
+    print "#{computer.name} is moving"
+    %w(. . .).each do |period|
+      pause
+      print "."
+    end
+  end
+
+  def display_game_winner
+    winner = [human, computer].find { |player| player.score == TTTGame::WINNING_SCORE }
+    if winner == human
+      puts format(MESSAGES['human_won_game'], winning_score: TTTGame::WINNING_SCORE)
+    else
+      puts format(MESSAGES['computer_won_game'], name: winner.name)
+    end
+    puts ""
+  end
+
+  def display_play_again_message
+    prompt('play_again')
+    puts ''
+    pause 1.5
+  end
+end
+
 class Board
   WINNING_LINES = [
     [1, 2, 3], [4, 5, 6], [7, 8, 9], # rows
@@ -148,6 +253,7 @@ class TTTGame
   O_MARKER = 'O'
   WINNING_SCORE = 2
 
+  include TTTGameDisplay
   attr_reader :board, :human, :computer
 
   def initialize
@@ -174,47 +280,6 @@ class TTTGame
     puts MESSAGES[message]
   end
 
-  def display_welcome_message
-    prompt('welcome')
-    puts ""
-    prompt('game_info')
-    pause(1)
-  end
-
-  def display_goodbye_message
-    prompt('goodbye')
-  end
-
-  def display_round_number
-    puts "ROUND #{@round}".center(20, '-')
-  end
-
-  def display_scoreboard
-    display_round_number
-    [human, computer].each { |player| puts "#{player.name}: #{player.score}" }
-    puts '-' * 20
-    puts ''
-  end
-
-  def display_markers
-    puts format(MESSAGES['markers'], human: human.marker,
-                                     computer_name: computer.name,
-                                     computer: computer.marker)
-  end
-
-  def display_board
-    display_scoreboard
-    display_markers
-    puts ""
-    board.draw
-    puts ""
-  end
-
-  def clear_screen_and_display_board
-    clear
-    display_board
-  end
-
   def joinor(numbers, delimiter=', ', word='or')
     case numbers.size
     when 0 then ''
@@ -224,68 +289,6 @@ class TTTGame
       numbers[-1] = "#{word} #{numbers[-1]}"
       numbers.join(delimiter)
     end
-  end
-
-  def display_move_options
-    puts format(MESSAGES['choose'], numbers: joinor(board.unmarked_keys))
-  end
-
-  def display_round_results
-    clear_screen_and_display_board
-
-    case board.winning_marker
-    when human.marker
-      prompt('human_won_round')
-    when computer.marker
-      puts format(MESSAGES['computer_won_round'], name: computer.name)
-    else
-      prompt('tie')
-    end
-
-    pause 1.5
-  end
-
-  def display_player_names
-    puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
-    puts ""
-    pause(1.5)
-  end
-
-  def display_player_markers
-    puts ""
-    print "Ok! "
-    display_markers
-    pause(1.5)
-  end
-
-  def display_first_player
-    puts ""
-    puts format(MESSAGES['first_player'], player: @current_player.name)
-    pause(1.5)
-  end
-
-  def display_computer_moving
-    print "#{computer.name} is moving"
-    %w(. . .).each do |period|
-      pause
-      print "."
-    end
-  end
-
-  def display_game_winner
-    winner = [human, computer].find { |player| player.score == WINNING_SCORE }
-    if winner == human
-      puts format(MESSAGES['human_won_game'], winning_score: WINNING_SCORE)
-    else
-      puts format(MESSAGES['computer_won_game'], name: winner.name)
-    end
-    puts ""
-  end
-
-  def display_play_again_message
-    prompt('play_again')
-    puts ''
-    pause 1.5
   end
 
   def configure_settings
