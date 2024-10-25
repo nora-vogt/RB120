@@ -146,6 +146,7 @@ end
 class TTTGame
   X_MARKER = 'X'
   O_MARKER = 'O'
+  WINNING_SCORE = 5
 
   attr_reader :board, :human, :computer
 
@@ -234,12 +235,14 @@ class TTTGame
 
     case board.winning_marker
     when human.marker
-      prompt('human_won')
+      prompt('human_won_round')
     when computer.marker
-      puts format(MESSAGES['computer_won'], name: computer.name)
+      puts format(MESSAGES['computer_won_round'], name: computer.name)
     else
       prompt('tie')
     end
+
+    pause 1.5
   end
 
   def display_player_names
@@ -272,6 +275,7 @@ class TTTGame
   def display_play_again_message
     prompt('play_again')
     puts ''
+    pause 1.5
   end
 
   def configure_settings
@@ -390,6 +394,10 @@ class TTTGame
     @current_player == human
   end
 
+  def game_won?
+    [human, computer].any? { |player| player.score == WINNING_SCORE }
+  end
+
   def play_again?
     prompt('ask_play_again')
     answer = ask_yes_or_no
@@ -419,14 +427,15 @@ class TTTGame
   end
 
   def reset_round
-    configure_settings if reset_settings?
     board.reset
-    reset_round_number
-    reset_scores
     clear
   end
 
   def reset_game
+    configure_settings if reset_settings?
+    reset_round
+    reset_round_number
+    reset_scores
   end
 
   def player_move
@@ -443,10 +452,14 @@ class TTTGame
         player_move
         update_round_results
         display_round_results
-        break unless play_again?
+        break if game_won?
+        #break unless play_again?
         reset_round
-        display_play_again_message
       end
+      puts "The game is won!"
+      break unless play_again?
+      reset_game
+      display_play_again_message
     end
   end
   #   loop do
