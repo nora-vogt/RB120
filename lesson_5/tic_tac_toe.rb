@@ -98,11 +98,23 @@ class Square
 end
 
 class Player
-  attr_accessor :marker
+  attr_accessor :marker, :score
   attr_reader :name
+
+  def initialize
+    @score = 0
+  end
 
   def prompt(message)
     puts MESSAGES[message]
+  end
+
+  def update_score
+    self.score += 1
+  end
+
+  def reset_score
+    self.score = 0
   end
 
   private
@@ -142,6 +154,7 @@ class TTTGame
     @human = Human.new
     @computer = Computer.new
     @current_player = human
+    @round = 1
   end
 
   def play
@@ -163,11 +176,23 @@ class TTTGame
   def display_welcome_message
     prompt('welcome')
     puts ""
+    prompt('game_info')
     pause(1)
   end
 
   def display_goodbye_message
     prompt('goodbye')
+  end
+
+  def display_round_number
+    puts "ROUND #{@round}".center(20, '-')
+  end
+
+  def display_scoreboard
+    display_round_number
+    [human, computer].each { |player| puts "#{player.name}: #{player.score}" }
+    puts '-' * 20
+    puts ''
   end
 
   def display_markers
@@ -177,6 +202,7 @@ class TTTGame
   end
 
   def display_board
+    display_scoreboard
     display_markers
     puts ""
     board.draw
@@ -203,7 +229,7 @@ class TTTGame
     puts format(MESSAGES['choose'], numbers: joinor(board.unmarked_keys))
   end
 
-  def display_result
+  def display_round_results
     clear_screen_and_display_board
 
     case board.winning_marker
@@ -347,6 +373,19 @@ class TTTGame
     alternate_current_player
   end
 
+  def update_round
+    @round += 1
+  end
+
+  def update_round_results
+    update_round
+
+    case board.winning_marker
+    when human.marker    then human.update_score
+    when computer.marker then computer.update_score
+    end
+  end
+
   def human_turn?
     @current_player == human
   end
@@ -371,10 +410,23 @@ class TTTGame
     sleep seconds
   end
 
-  def reset
+  def reset_round_number
+    @round = 1
+  end
+
+  def reset_scores
+    [human, computer].each(&:reset_score)
+  end
+
+  def reset_round
     configure_settings if reset_settings?
     board.reset
+    reset_round_number
+    reset_scores
     clear
+  end
+
+  def reset_game
   end
 
   def player_move
@@ -387,13 +439,25 @@ class TTTGame
 
   def main_game
     loop do
-      player_move
-      display_result
-      break unless play_again?
-      reset
-      display_play_again_message
+      loop do
+        player_move
+        update_round_results
+        display_round_results
+        break unless play_again?
+        reset_round
+        display_play_again_message
+      end
     end
   end
+  #   loop do
+  #     player_move
+  #     update_round_results
+  #     display_round_results
+  #     break unless play_again?
+  #     reset_round
+  #     display_play_again_message
+  #   end
+  # end
 end
 
 game = TTTGame.new
