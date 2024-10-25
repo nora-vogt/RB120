@@ -146,7 +146,7 @@ end
 class TTTGame
   X_MARKER = 'X'
   O_MARKER = 'O'
-  WINNING_SCORE = 5
+  WINNING_SCORE = 2
 
   attr_reader :board, :human, :computer
 
@@ -270,6 +270,16 @@ class TTTGame
       pause
       print "."
     end
+  end
+
+  def display_game_winner
+    winner = [human, computer].find { |player| player.score == WINNING_SCORE }
+    if winner == human
+      puts format(MESSAGES['human_won_game'], winning_score: WINNING_SCORE)
+    else
+      puts format(MESSAGES['computer_won_game'], name: winner.name)
+    end
+    puts ""
   end
 
   def display_play_again_message
@@ -446,31 +456,25 @@ class TTTGame
     end
   end
 
+  def play_rounds_until_game_won
+    loop do
+      player_move
+      update_round_results
+      display_round_results
+      break if game_won?
+      reset_round
+    end
+  end
+
   def main_game
     loop do
-      loop do
-        player_move
-        update_round_results
-        display_round_results
-        break if game_won?
-        #break unless play_again?
-        reset_round
-      end
-      puts "The game is won!"
+      play_rounds_until_game_won
+      display_game_winner
       break unless play_again?
       reset_game
       display_play_again_message
     end
   end
-  #   loop do
-  #     player_move
-  #     update_round_results
-  #     display_round_results
-  #     break unless play_again?
-  #     reset_round
-  #     display_play_again_message
-  #   end
-  # end
 end
 
 game = TTTGame.new
