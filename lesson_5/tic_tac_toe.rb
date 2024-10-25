@@ -147,6 +147,7 @@ class TTTGame
   def play
     clear
     display_welcome_message
+    configure_settings
     main_game
     display_goodbye_message
   end
@@ -162,6 +163,7 @@ class TTTGame
   def display_welcome_message
     prompt('welcome')
     puts ""
+    pause(1)
   end
 
   def display_goodbye_message
@@ -228,8 +230,23 @@ class TTTGame
     end
   end
 
+  def display_play_again_message
+    prompt('play_again')
+    puts ''
+  end
+
+  def configure_settings
+    clear
+    set_player_names
+    clear
+    set_player_markers
+    clear
+    set_current_player
+  end
+
   def set_player_names
     [human, computer].each(&:set_name)
+    display_player_names
   end
 
   def ask_one_two_three_choice
@@ -237,6 +254,14 @@ class TTTGame
       choice = gets.chomp
       return choice if %w(1 2 3).include?(choice)
       prompt('invalid_number')
+    end
+  end
+
+  def ask_yes_or_no
+    loop do
+      answer = gets.chomp.downcase
+      break answer if %w(y yes n no).include? answer
+      prompt('invalid_yes_no')
     end
   end
 
@@ -292,7 +317,8 @@ class TTTGame
   end
 
   def computer_moves
-    display_computer_moving
+    # commented out for testing - uncomment later
+    #display_computer_moving 
     board[board.unmarked_keys.sample] = computer.marker
   end
 
@@ -319,14 +345,14 @@ class TTTGame
   end
 
   def play_again?
-    answer = nil
-    loop do
-      prompt('ask_play_again')
-      answer = gets.chomp.downcase
-      break if %w(y yes n no).include? answer
-      prompt('invalid_play_again')
-    end
+    prompt('ask_play_again')
+    answer = ask_yes_or_no
+    ['y', 'yes'].include?(answer)
+  end
 
+  def reset_settings?
+    prompt('ask_change_settings')
+    answer = ask_yes_or_no
     ['y', 'yes'].include?(answer)
   end
 
@@ -334,14 +360,13 @@ class TTTGame
     system 'clear'
   end
 
-  def display_play_again_message
-    prompt('play_again')
-    puts ''
+  def pause(seconds=0.5)
+    sleep seconds
   end
 
   def reset
+    configure_settings if reset_settings?
     board.reset
-    #@current_player = human
     clear
   end
 
@@ -354,11 +379,7 @@ class TTTGame
   end
 
   def main_game
-    set_player_names
     loop do
-      display_player_names
-      set_player_markers
-      set_current_player
       player_move
       display_result
       break unless play_again?
