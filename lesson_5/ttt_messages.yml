@@ -1,11 +1,28 @@
 welcome: "Welcome to Tic-Tac-Toe!"
-markers: "You're %{human}. Computer is %{computer}."
+ask_name: "Please enter your name:"
+display_names: "Hi %{human}. You'll play against %{computer}."
+invalid_name: "Sorry. Must enter a name:"
+ask_marker: |
+  Choose your marker (1, 2, or 3):
+  1. X
+  2. O
+  3. Choose randomly!
+invalid_number: "Sorry. Must enter 1, 2, or 3:"
+marker_choice: "Ok! You're %{marker}."
+ask_first_player: |
+  Who should go first? (1, 2, or 3):
+  1. Me
+  2. %{computer}
+  3. Choose randomly!
+first_player: "%{player} is moving first!"
+markers: "You're %{human}. %{computer_name} is %{computer}."
 choose: "Choose a square (%{numbers}):"
 invalid_choice: "Sorry, that's not a valid choice."
 human_won: "You won!"
-computer_won: "The computer won! Better luck next time."
+computer_won: "%{name} won! Better luck next time."
 tie: "It's a tie!"
 ask_play_again: "Would you like to play again? (y/n)"
-invalid_play_again: "Sorry, must enter y or n."
+invalid_yes_no: "Sorry, must enter y or n."
+ask_change_settings: "Would you like to change the game settings? (y/n)"
 play_again: "Let's play again!"
 goodbye: "Thanks for playing Tic-Tac-Toe! Goodbye!"

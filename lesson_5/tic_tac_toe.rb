@@ -210,7 +210,7 @@ class TTTGame
     when human.marker
       prompt('human_won')
     when computer.marker
-      prompt('computer_won')
+      puts format(MESSAGES['computer_won'], name: computer.name)
     else
       prompt('tie')
     end
@@ -219,13 +219,26 @@ class TTTGame
   def display_player_names
     puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
     puts ""
-    sleep 1.5
+    pause(1.5)
+  end
+
+  def display_player_markers
+    puts ""
+    print "Ok! "
+    display_markers
+    pause(1.5)
+  end
+
+  def display_first_player
+    puts ""
+    puts format(MESSAGES['first_player'], player: @current_player.name)
+    pause(1.5)
   end
 
   def display_computer_moving
     print "#{computer.name} is moving"
     %w(. . .).each do |period|
-      sleep 0.5
+      pause
       print "."
     end
   end
@@ -236,17 +249,12 @@ class TTTGame
   end
 
   def configure_settings
-    clear
-    set_player_names
-    clear
-    set_player_markers
-    clear
-    set_current_player
-  end
-
-  def set_player_names
-    [human, computer].each(&:set_name)
+    clear_screen_and_set_player_names
     display_player_names
+    clear_screen_and_set_player_markers
+    display_player_markers
+    clear_screen_and_set_first_player
+    display_first_player
   end
 
   def ask_one_two_three_choice
@@ -265,6 +273,11 @@ class TTTGame
     end
   end
 
+  def clear_screen_and_set_player_names
+    clear
+    [human, computer].each(&:set_name)
+  end
+
   def set_human_marker
     prompt('ask_marker')
     choice = ask_one_two_three_choice.to_i
@@ -280,16 +293,14 @@ class TTTGame
     computer.marker = (human.marker == X_MARKER ? O_MARKER : X_MARKER)
   end
 
-  def set_player_markers
+  def clear_screen_and_set_player_markers
+    clear
     set_human_marker
     set_computer_marker
-    puts ""
-    print "Ok! "
-    display_markers
-    sleep 1.5
   end
 
-  def set_current_player
+  def clear_screen_and_set_first_player
+    clear
     puts format(MESSAGES['ask_first_player'], computer: computer.name)
     choice = ask_one_two_three_choice.to_i
 
@@ -298,10 +309,6 @@ class TTTGame
     when 2 then @current_player = computer
     when 3 then @current_player = [human, computer].sample
     end
-
-    puts ""
-    puts format(MESSAGES['first_player'], player: @current_player.name)
-    sleep 1.5
   end
 
   def human_moves
