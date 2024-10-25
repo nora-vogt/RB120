@@ -7,7 +7,7 @@ module TTTGameDisplay
   def display_welcome_message
     prompt('welcome')
     puts ""
-    puts format(MESSAGES['game_info'], number: TTTGame::WINNING_SCORE)
+    prompt('game_info')
     pause(1)
   end
 
@@ -67,14 +67,21 @@ module TTTGameDisplay
   def display_player_names
     puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
     puts ""
-    pause(1.5)
+    pause 1.5
   end
 
   def display_player_markers
     puts ""
     print "Ok! "
     display_markers
-    pause(1.5)
+    pause 1.5
+  end
+
+  def display_winning_score
+    puts ""
+    puts format(MESSAGES['winning_score'], number: winning_score,
+      round: (winning_score == 1 ? 'round' : 'rounds'))
+    pause 1.5
   end
 
   def display_first_player
@@ -92,9 +99,9 @@ module TTTGameDisplay
   end
 
   def display_game_winner
-    winner = [human, computer].find { |player| player.score == TTTGame::WINNING_SCORE }
+    winner = [human, computer].find { |player| player.score == winning_score }
     if winner == human
-      puts format(MESSAGES['human_won_game'], winning_score: TTTGame::WINNING_SCORE)
+      puts format(MESSAGES['human_won_game'], number: winning_score)
     else
       puts format(MESSAGES['computer_won_game'], name: winner.name)
     end
@@ -251,10 +258,10 @@ end
 class TTTGame
   X_MARKER = 'X'
   O_MARKER = 'O'
-  WINNING_SCORE = 2
+  DEFAULT_WINNING_SCORE = 2
 
   include TTTGameDisplay
-  attr_reader :board, :human, :computer
+  attr_reader :board, :human, :computer, :winning_score
 
   def initialize
     @board = Board.new
@@ -274,7 +281,7 @@ class TTTGame
 
   private
 
-  attr_writer :current_player
+  attr_writer :current_player, :winning_score
 
   def prompt(message)
     puts MESSAGES[message]
@@ -296,6 +303,8 @@ class TTTGame
     display_player_names
     clear_screen_and_set_player_markers
     display_player_markers
+    clear_screen_and_set_winning_score
+    display_winning_score
     clear_screen_and_set_first_player
     display_first_player
   end
@@ -340,6 +349,39 @@ class TTTGame
     clear
     set_human_marker
     set_computer_marker
+  end
+
+  def ask_default_or_custom_score
+    puts format(MESSAGES['ask_default_or_custom_score'], number: DEFAULT_WINNING_SCORE)
+    loop do
+      choice = gets.chomp.downcase
+      return choice if ['y', 'yes', 'n', 'no'].include?(choice)
+      prompt('invalid_yes_no')
+    end
+  end
+
+  def set_winning_score
+    score = nil
+    prompt('ask_winning_score')
+    loop do
+      score = nil
+      score = gets.chomp
+      break if ('1'..'50').include?(score)
+      prompt('invalid_score')
+    end
+
+    self.winning_score = score.to_i
+  end
+
+  def clear_screen_and_set_winning_score
+    clear
+    choice = ask_default_or_custom_score
+
+    if ['y', 'yes'].include?(choice)
+      set_winning_score
+    else
+      self.winning_score = DEFAULT_WINNING_SCORE
+    end
   end
 
   def clear_screen_and_set_first_player
@@ -408,7 +450,7 @@ class TTTGame
   end
 
   def game_won?
-    [human, computer].any? { |player| player.score == WINNING_SCORE }
+    [human, computer].any? { |player| player.score == winning_score }
   end
 
   def play_again?
