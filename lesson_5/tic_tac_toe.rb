@@ -129,8 +129,12 @@ class Board
     reset
   end
 
-  def []=(num, marker)
-    @squares[num].marker = marker
+  def []=(key, marker)
+    @squares[key].marker = marker
+  end
+
+  def [](key)
+    @squares[key]
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -438,7 +442,7 @@ class TTTGame
                computer_square_to_win
              elsif human_square_to_win # defense
                human_square_to_win
-             elsif board.unmarked_keys.include?(MIDDLE_SQUARE)
+             elsif board[MIDDLE_SQUARE].unmarked?
                MIDDLE_SQUARE
              else
                board.unmarked_keys.sample
