@@ -24,8 +24,15 @@ module TTTGameDisplay
   def display_welcome_message
     prompt('welcome')
     puts ""
-    prompt('game_info')
     pause(1)
+  end
+
+  def clear_screen_and_display_rules
+    clear
+    prompt('rules')
+    puts ""
+    prompt('exit')
+    gets
   end
 
   def display_goodbye_message
@@ -316,6 +323,7 @@ class TTTGame
   def play
     clear
     display_welcome_message
+    clear_screen_and_display_rules if read_rules?
     configure_settings
     main_game
     display_goodbye_message
@@ -347,9 +355,16 @@ class TTTGame
   def ask_yes_or_no
     loop do
       answer = gets.chomp.downcase
-      break answer if %w(y yes n no).include? answer
+      return answer if %w(y yes n no).include? answer
       prompt('invalid_yes_no')
     end
+  end
+
+  def read_rules?
+    prompt('ask_rules')
+    puts ""
+    choice = ask_yes_or_no
+    ['y', 'yes'].include?(choice) ? true : false
   end
 
   def clear_screen_and_set_player_names
