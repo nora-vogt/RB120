@@ -65,6 +65,7 @@ module TTTGameDisplay
   end
 
   def display_player_names
+    puts ""
     puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
     puts ""
     pause 1.5
@@ -163,11 +164,23 @@ class Board
 
   def winning_marker
     WINNING_LINES.each do |line|
-      squares = @squares.values_at(*line)
+      squares = find_squares(line)
       if all_identical_markers?(squares)
         return squares[0].marker
       end
     end
+    nil
+  end
+  
+  def square_needed_to_win(marker)
+    WINNING_LINES.each do |line|
+      markers = find_squares(line).map(&:marker)
+      if markers.count(marker) == 2
+        unmarked_square = line.find { |key| @squares[key].unmarked? }
+        return unmarked_square if unmarked_square
+      end
+    end
+
     nil
   end
 
@@ -176,6 +189,10 @@ class Board
   end
 
   private
+
+  def find_squares(keys)
+    @squares.values_at(*keys)
+  end
 
   def all_identical_markers?(squares)
     return false unless squares.all?(&:marked?)
@@ -250,7 +267,7 @@ end
 
 class Computer < Player
   def set_name
-    self.name = ["Mosscap", "Hal", "Bender"].sample
+    self.name = ["Mosscap", "HAL", "Bender", "Rosie"].sample
   end
 end
 
@@ -258,6 +275,7 @@ end
 class TTTGame
   X_MARKER = 'X'
   O_MARKER = 'O'
+  MIDDLE_SQUARE = 5
   DEFAULT_WINNING_SCORE = 2
 
   include TTTGameDisplay
@@ -362,6 +380,7 @@ class TTTGame
 
   def set_winning_score
     score = nil
+    puts ""
     prompt('ask_winning_score')
     loop do
       score = nil
@@ -410,8 +429,17 @@ class TTTGame
 
   def computer_moves
     # commented out for testing - uncomment later
-    #display_computer_moving 
-    board[board.unmarked_keys.sample] = computer.marker
+    # display_computer_moving 
+    if board.square_needed_to_win(computer.marker) # offense
+      board[board.square_needed_to_win(computer.marker)] = computer.marker
+    elsif board.square_needed_to_win(human.marker) # defense
+      board[board.square_needed_to_win(human.marker)] = computer.marker
+    elsif board.unmarked_keys.include?(MIDDLE_SQUARE)
+      board[MIDDLE_SQUARE] = computer.marker
+    else
+      board[board.unmarked_keys.sample] = computer.marker
+    end
+    #board[board.unmarked_keys.sample] = computer.marker
   end
 
   def alternate_current_player
