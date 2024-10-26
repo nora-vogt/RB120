@@ -88,7 +88,7 @@ module TTTGameDisplay
 
   def display_first_player
     puts ""
-    puts format(MESSAGES['first_player'], player: @current_player.name)
+    puts format(MESSAGES['first_player'], player: @first_player.name)
     pause(1.5)
   end
 
@@ -290,7 +290,6 @@ class TTTGame
     @board = Board.new
     @human = Human.new
     @computer = Computer.new
-    @current_player = human
     @round = 1
   end
 
@@ -414,9 +413,9 @@ class TTTGame
     choice = ask_one_two_three_choice.to_i
 
     case choice
-    when 1 then @current_player = human
-    when 2 then @current_player = computer
-    when 3 then @current_player = [human, computer].sample
+    when 1 then @first_player = human
+    when 2 then @first_player = computer
+    when 3 then @first_player = [human, computer].sample
     end
   end
 
@@ -459,6 +458,20 @@ class TTTGame
                       end
   end
 
+  def set_current_player
+    @current_player = if @round == 1
+                        @first_player
+                      elsif @round_loser == human
+                        human
+                      elsif @round_loser == computer
+                        computer
+                      elsif human.score == computer.score # if only tie games so far, choose randomly
+                        [human, computer].sample
+                      else # last round was a tie, lowest scoring player goes first
+                        [human, computer].min_by(&:score)
+                      end
+  end
+
   def current_player_moves
     if human_turn?
       human_moves
@@ -477,8 +490,12 @@ class TTTGame
     update_round
 
     case board.winning_marker
-    when human.marker    then human.update_score
-    when computer.marker then computer.update_score
+    when human.marker
+      human.update_score
+      @round_loser = computer
+    when computer.marker
+      computer.update_score
+      @round_loser = human
     end
   end
 
@@ -531,6 +548,7 @@ class TTTGame
   end
 
   def player_move
+    set_current_player
     loop do
       clear_screen_and_display_board
       current_player_moves
