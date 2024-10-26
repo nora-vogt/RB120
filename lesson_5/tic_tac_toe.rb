@@ -3,6 +3,23 @@ require 'pry'
 
 MESSAGES = YAML.load_file('ttt_messages.yml')
 
+module Formatable
+  def prompt(message, options = {})
+    puts "=> #{format(MESSAGES[message], options)}"
+  end
+
+  def joinor(numbers, delimiter=', ', word='or')
+    case numbers.size
+    when 0 then ''
+    when 1 then numbers[0].to_s
+    when 2 then numbers.join(" #{word} ")
+    else
+      numbers[-1] = "#{word} #{numbers[-1]}"
+      numbers.join(delimiter)
+    end
+  end
+end
+
 module TTTGameDisplay
   def display_welcome_message
     prompt('welcome')
@@ -27,9 +44,10 @@ module TTTGameDisplay
   end
 
   def display_markers
-    puts format(MESSAGES['markers'], human: human.marker,
-                                     computer_name: computer.name,
-                                     computer: computer.marker)
+    puts format(MESSAGES['scoreboard_markers'], 
+                human: human.marker,
+                computer_name: computer.name,
+                computer: computer.marker)
   end
 
   def display_board
@@ -46,7 +64,7 @@ module TTTGameDisplay
   end
 
   def display_move_options
-    puts format(MESSAGES['choose'], numbers: joinor(board.unmarked_keys))
+    prompt('choose', numbers: joinor(board.unmarked_keys))
   end
 
   def display_round_results
@@ -56,7 +74,7 @@ module TTTGameDisplay
     when human.marker
       prompt('human_won_round')
     when computer.marker
-      puts format(MESSAGES['computer_won_round'], name: computer.name)
+      prompt('computer_won_round', name: computer.name)
     else
       prompt('tie')
     end
@@ -66,29 +84,29 @@ module TTTGameDisplay
 
   def display_player_names
     puts ""
-    puts format(MESSAGES['display_names'], human: human.name, computer: computer.name)
+    prompt('display_names', human: human.name, computer: computer.name)
     puts ""
     pause 1.5
   end
 
-  def display_player_markers
+  def display_marker_choice
     puts ""
-    print "Ok! "
-    display_markers
+    prompt('markers', human: human.marker,
+                      computer_name: computer.name,
+                      computer: computer.marker)
     pause 1.5
   end
 
   def display_winning_score
     puts ""
-    puts format(MESSAGES['winning_score'],
-                number: winning_score,
-                round: (winning_score == 1 ? 'round' : 'rounds'))
+    prompt('winning_score', number: winning_score,
+                            round: (winning_score == 1 ? 'round' : 'rounds'))
     pause 1.5
   end
 
   def display_first_player
     puts ""
-    puts format(MESSAGES['first_player'], player: @first_player.name)
+    prompt('first_player', player: @first_player.name)
     pause 1.5
   end
 
@@ -103,9 +121,9 @@ module TTTGameDisplay
   def display_game_winner
     winner = [human, computer].find { |player| player.score == winning_score }
     if winner == human
-      puts format(MESSAGES['human_won_game'], number: winning_score)
+      prompt('human_won_game', number: winning_score)
     else
-      puts format(MESSAGES['computer_won_game'], name: winner.name)
+      prompt('computer_won_game', name: winner.name)
     end
     puts ""
   end
@@ -232,15 +250,13 @@ class Square
 end
 
 class Player
+  include Formatable
+
   attr_accessor :marker, :score
   attr_reader :name
 
   def initialize
     @score = 0
-  end
-
-  def prompt(message)
-    puts MESSAGES[message]
   end
 
   def update_score
@@ -280,14 +296,14 @@ class Computer < Player
   end
 end
 
-# Orchestration Engine
 class TTTGame
   X_MARKER = 'X'
   O_MARKER = 'O'
   MIDDLE_SQUARE = 5
   DEFAULT_WINNING_SCORE = 2
 
-  include TTTGameDisplay
+  include TTTGameDisplay, Formatable
+
   attr_reader :board, :human, :computer, :winning_score
 
   def initialize
@@ -309,26 +325,11 @@ class TTTGame
 
   attr_writer :current_player, :winning_score
 
-  def prompt(message)
-    puts MESSAGES[message]
-  end
-
-  def joinor(numbers, delimiter=', ', word='or')
-    case numbers.size
-    when 0 then ''
-    when 1 then numbers[0].to_s
-    when 2 then numbers.join(" #{word} ")
-    else
-      numbers[-1] = "#{word} #{numbers[-1]}"
-      numbers.join(delimiter)
-    end
-  end
-
   def configure_settings
     clear_screen_and_set_player_names
     display_player_names
     clear_screen_and_set_player_markers
-    display_player_markers
+    display_marker_choice
     clear_screen_and_set_winning_score
     display_winning_score
     clear_screen_and_set_first_player
@@ -378,7 +379,7 @@ class TTTGame
   end
 
   def ask_default_or_custom_score
-    puts format(MESSAGES['ask_default_or_custom_score'], number: DEFAULT_WINNING_SCORE)
+    prompt('ask_default_or_custom_score', number: DEFAULT_WINNING_SCORE)
     loop do
       choice = gets.chomp.downcase
       return choice if ['y', 'yes', 'n', 'no'].include?(choice)
@@ -413,7 +414,7 @@ class TTTGame
 
   def clear_screen_and_set_first_player
     clear
-    puts format(MESSAGES['ask_first_player'], computer: computer.name)
+    prompt('ask_first_player', computer: computer.name)
     choice = ask_one_two_three_choice.to_i
 
     case choice

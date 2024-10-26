@@ -4,26 +4,27 @@ ask_name: "Please enter your name:"
 display_names: "Hi %{human}. You'll play against %{computer}."
 invalid_name: "Sorry. Must enter a name:"
 ask_marker: |
-  Choose your marker (1, 2, or 3):
+  Choose your marker. Enter 1, 2, or 3:
   1. X
   2. O
   3. Choose randomly!
 invalid_number: "Sorry. Must enter 1, 2, or 3:"
-marker_choice: "Ok! You're %{marker}."
+markers: "You'll play as %{human}. %{computer_name} will be %{computer}."
+scoreboard_markers: "You're %{human}. %{computer_name} is %{computer}."
 ask_default_or_custom_score: |
   The default score to win Tic-Tac-Toe is %{number} points.
-  Would you like to set a custom winning score?
-  Enter 'y' to set a custom score, or 'n' to use the default score.
+     Would you like to set a custom winning score?
+
+     Enter 'y' to set a custom score, or 'n' to use the default score.
 ask_winning_score: "Great! Enter a number between 1-50 for the winning score:"
 invalid_score: "Sorry. Must enter a number between 1 and 50."
 winning_score: "Ok! The first player to win %{number} %{round} wins the game!"
 ask_first_player: |
-  Who should go first? (1, 2, or 3):
+  Who should go first? Enter 1, 2, or 3:
   1. Me
   2. %{computer}
   3. Choose randomly!
 first_player: "%{player} is moving first! The loser of a round will start the next round."
-markers: "You're %{human}. %{computer_name} is %{computer}."
 choose: "Choose a square (%{numbers}):"
 invalid_choice: "Sorry, that's not a valid choice."
 human_won_round: "You won this round!"
