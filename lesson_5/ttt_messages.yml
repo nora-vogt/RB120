@@ -1,4 +1,5 @@
 welcome: "Welcome to Tic-Tac-Toe!"
+game_info: "Rules/game info placeholder."
 ask_name: "Please enter your name:"
 display_names: "Hi %{human}. You'll play against %{computer}."
 invalid_name: "Sorry. Must enter a name:"
@@ -9,6 +10,13 @@ ask_marker: |
   3. Choose randomly!
 invalid_number: "Sorry. Must enter 1, 2, or 3:"
 marker_choice: "Ok! You're %{marker}."
+ask_default_or_custom_score: |
+  The default score to win Tic-Tac-Toe is %{number} points.
+  Would you like to set a custom winning score?
+  Enter 'y' to set a custom score, or 'n' to use the default score.
+ask_winning_score: "Great! Enter a number between 1-50 for the winning score:"
+invalid_score: "Sorry. Must enter a number between 1 and 50."
+winning_score: "Ok! The first player to win %{number} %{round} wins the game!"
 ask_first_player: |
   Who should go first? (1, 2, or 3):
   1. Me
@@ -18,8 +26,10 @@ first_player: "%{player} is moving first!"
 markers: "You're %{human}. %{computer_name} is %{computer}."
 choose: "Choose a square (%{numbers}):"
 invalid_choice: "Sorry, that's not a valid choice."
-human_won: "You won!"
-computer_won: "%{name} won! Better luck next time."
+human_won_round: "You won this round!"
+human_won_game: "You won %{number} rounds and win the game! Congratulations!"
+computer_won_round: "%{name} won this round!"
+computer_won_game: "%{name} won the game! Better luck next time."
 tie: "It's a tie!"
 ask_play_again: "Would you like to play again? (y/n)"
 invalid_yes_no: "Sorry, must enter y or n."
