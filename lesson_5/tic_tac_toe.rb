@@ -433,7 +433,7 @@ class TTTGame
     # display_computer_moving
     computer_square_to_win = board.square_needed_to_win(computer.marker)
     human_square_to_win = board.square_needed_to_win(human.marker)
-    
+
     square = if computer_square_to_win # offense
                computer_square_to_win
              elsif human_square_to_win # defense
@@ -549,8 +549,8 @@ class TTTGame
       play_rounds_until_game_won
       display_game_winner
       break unless play_again?
-      reset_game
       display_play_again_message
+      reset_game
     end
   end
 end
