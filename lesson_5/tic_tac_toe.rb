@@ -251,6 +251,10 @@ class Player
     self.score = 0
   end
 
+  def same_score?(other)
+    score == other.score
+  end
+
   private
 
   attr_writer :name
@@ -465,7 +469,7 @@ class TTTGame
                         human
                       elsif @round_loser == computer
                         computer
-                      elsif human.score == computer.score # if only tie games so far, choose randomly
+                      elsif human.same_score?(computer) # if only tie games so far, choose randomly
                         [human, computer].sample
                       else # last round was a tie, lowest scoring player goes first
                         [human, computer].min_by(&:score)
