@@ -80,8 +80,9 @@ module TTTGameDisplay
 
   def display_winning_score
     puts ""
-    puts format(MESSAGES['winning_score'], number: winning_score,
-      round: (winning_score == 1 ? 'round' : 'rounds'))
+    puts format(MESSAGES['winning_score'],
+                number: winning_score,
+                round: (winning_score == 1 ? 'round' : 'rounds'))
     pause 1.5
   end
 
@@ -95,7 +96,7 @@ module TTTGameDisplay
     print "#{computer.name} is moving"
     %w(. . .).each do |period|
       pause
-      print "."
+      print period
     end
   end
 
@@ -171,7 +172,7 @@ class Board
     end
     nil
   end
-  
+
   def square_needed_to_win(marker)
     WINNING_LINES.each do |line|
       markers = find_squares(line).map(&:marker)
@@ -434,14 +435,14 @@ class TTTGame
     human_square_to_win = board.square_needed_to_win(human.marker)
     
     square = if computer_square_to_win # offense
-              computer_square_to_win
-            elsif human_square_to_win # defense
-              human_square_to_win
-            elsif board.unmarked_keys.include?(MIDDLE_SQUARE)
-              MIDDLE_SQUARE
-            else
-              board.unmarked_keys.sample
-            end
+               computer_square_to_win
+             elsif human_square_to_win # defense
+               human_square_to_win
+             elsif board.unmarked_keys.include?(MIDDLE_SQUARE)
+               MIDDLE_SQUARE
+             else
+               board.unmarked_keys.sample
+             end
 
     board[square] = computer.marker
   end
