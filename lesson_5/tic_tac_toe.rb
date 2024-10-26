@@ -429,17 +429,21 @@ class TTTGame
 
   def computer_moves
     # commented out for testing - uncomment later
-    # display_computer_moving 
-    if board.square_needed_to_win(computer.marker) # offense
-      board[board.square_needed_to_win(computer.marker)] = computer.marker
-    elsif board.square_needed_to_win(human.marker) # defense
-      board[board.square_needed_to_win(human.marker)] = computer.marker
-    elsif board.unmarked_keys.include?(MIDDLE_SQUARE)
-      board[MIDDLE_SQUARE] = computer.marker
-    else
-      board[board.unmarked_keys.sample] = computer.marker
-    end
-    #board[board.unmarked_keys.sample] = computer.marker
+    # display_computer_moving
+    computer_square_to_win = board.square_needed_to_win(computer.marker)
+    human_square_to_win = board.square_needed_to_win(human.marker)
+    
+    square = if computer_square_to_win # offense
+              computer_square_to_win
+            elsif human_square_to_win # defense
+              human_square_to_win
+            elsif board.unmarked_keys.include?(MIDDLE_SQUARE)
+              MIDDLE_SQUARE
+            else
+              board.unmarked_keys.sample
+            end
+
+    board[square] = computer.marker
   end
 
   def alternate_current_player
