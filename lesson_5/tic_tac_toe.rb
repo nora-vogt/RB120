@@ -89,13 +89,13 @@ module TTTGameDisplay
   def display_first_player
     puts ""
     puts format(MESSAGES['first_player'], player: @first_player.name)
-    pause(1.5)
+    pause 1.5
   end
 
   def display_computer_moving
     print "#{computer.name} is moving"
     %w(. . .).each do |period|
-      pause
+      pause 0.3
       print period
     end
   end
@@ -437,7 +437,7 @@ class TTTGame
 
   def computer_moves
     # commented out for testing - uncomment later
-    # display_computer_moving
+    display_computer_moving
     computer_square_to_win = board.square_needed_to_win(computer.marker)
     human_square_to_win = board.square_needed_to_win(human.marker)
 
@@ -465,13 +465,11 @@ class TTTGame
   def set_current_player
     @current_player = if @round == 1
                         @first_player
-                      elsif @round_loser == human
-                        human
-                      elsif @round_loser == computer
-                        computer
-                      elsif human.same_score?(computer) # if only tie games so far, choose randomly
+                      elsif @round_loser
+                        @round_loser == human ? human : computer
+                      elsif human.same_score?(computer)
                         [human, computer].sample
-                      else # last round was a tie, lowest scoring player goes first
+                      else
                         [human, computer].min_by(&:score)
                       end
   end
@@ -581,5 +579,4 @@ class TTTGame
   end
 end
 
-game = TTTGame.new
-game.play
+TTTGame.new.play
