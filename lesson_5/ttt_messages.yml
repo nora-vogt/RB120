@@ -22,7 +22,7 @@ ask_first_player: |
   1. Me
   2. %{computer}
   3. Choose randomly!
-first_player: "%{player} is moving first!"
+first_player: "%{player} is moving first! The loser of a round will start the next round."
 markers: "You're %{human}. %{computer_name} is %{computer}."
 choose: "Choose a square (%{numbers}):"
 invalid_choice: "Sorry, that's not a valid choice."
