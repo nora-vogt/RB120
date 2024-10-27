@@ -1,6 +1,20 @@
 welcome: "Welcome to Tic-Tac-Toe!"
 ask_rules: "Would you like to read the rules? Enter y or n:"
-rules: "Rules/game info placeholder."
+rules: |
+  In Tic-Tac-Toe, you and the computer take turns marking squares on a board.
+    In order to win, you need to mark three squares in a row either vertically,
+    horizontally, or diagonally. The first player to successfully mark three
+    squares in a row wins the round and gets one point. The round ends either
+    when someone wins or the board is filled.
+
+    The first player to reach 5 points (default), or the number of points you 
+    choose, wins the game. No points will be awarded for tie games.
+
+    You may choose who moves first for the first round. The loser will start 
+    the next round. If the round ends in a tie, the player with fewer points 
+    will start the next round.
+
+    Good luck!
 exit: "Press [Enter] to exit the rules:"
 ask_name: "Please enter your name:"
 display_names: "Hi %{human}. You'll play against %{computer}."
@@ -18,7 +32,7 @@ ask_default_or_custom_score: |
   The default score to win Tic-Tac-Toe is %{number} points.
      Would you like to set a custom winning score?
 
-     Enter 'y' to set a custom score, or 'n' to use the default score.
+  => Enter 'y' to set a custom score, or 'n' to use the default score.
 ask_winning_score: "Great! Enter a number between 1-50 for the winning score:"
 invalid_score: "Sorry. Must enter a number between 1 and 50."
 winning_score: "Ok! The first player to win %{number} %{round} wins the game!"

@@ -162,18 +162,22 @@ class Board
     @squares[key]
   end
 
+  def square_number(key)
+    @squares[key].unmarked? ? key : Square::INITIAL_MARKER
+  end
+
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   def draw
-    puts "     |     |"
+    puts "    #{square_number(1)}|    #{square_number(2)}|    #{square_number(3)}"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}  "
     puts "     |     |"
     puts "-----+-----+-----"
-    puts "     |     |"
+    puts "    #{square_number(4)}|    #{square_number(5)}|    #{square_number(6)}"
     puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}  "
     puts "     |     |"
     puts "-----+-----+-----"
-    puts "     |     |"
+    puts "    #{square_number(7)}|    #{square_number(8)}|    #{square_number(9)}"
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}  "
     puts "     |     |"
   end
