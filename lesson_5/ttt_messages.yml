@@ -36,6 +36,7 @@ ask_default_or_custom_score: |
   => Enter 'y' to set a custom score, or 'n' to use the default score.
 ask_winning_score: "Great! Enter a number between 1-50 for the winning score:"
 invalid_score: "Sorry. Must enter a number between 1 and 50:"
+keep_default: "Ok! We'll stick with the default of winning %{number} rounds to win the game."
 winning_score: "Ok! The first player to win %{number} %{round} wins the game!"
 ask_first_player: |
   Who should go first? Enter 1, 2, or 3:

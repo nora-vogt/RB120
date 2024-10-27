@@ -30,6 +30,7 @@ module TTTGameDisplay
   def clear_screen_and_display_rules
     clear
     prompt('rules', score: TTTGame::DEFAULT_WINNING_SCORE)
+    puts ""
     prompt('exit')
     gets
   end
@@ -50,10 +51,9 @@ module TTTGameDisplay
   end
 
   def display_markers
-    puts format(MESSAGES['scoreboard_markers'],
-                human: human.marker,
-                computer_name: computer.name,
-                computer: computer.marker)
+    puts format(MESSAGES['scoreboard_markers'], human: human.marker,
+                                                computer_name: computer.name,
+                                                computer: computer.marker)
   end
 
   def display_board
@@ -67,10 +67,6 @@ module TTTGameDisplay
   def clear_screen_and_display_board
     clear
     display_board
-  end
-
-  def display_move_options
-    prompt('choose', numbers: joinor(board.unmarked_keys))
   end
 
   def display_round_results
@@ -104,8 +100,12 @@ module TTTGameDisplay
 
   def display_winning_score
     puts ""
-    prompt('winning_score', number: winning_score,
-                            round: (winning_score == 1 ? 'round' : 'rounds'))
+    if winning_score == TTTGame::DEFAULT_WINNING_SCORE
+      prompt('keep_default', number: winning_score)
+    else
+      prompt('winning_score', number: winning_score,
+                              round: (winning_score == 1 ? 'round' : 'rounds'))
+    end
     pause 1.5
   end
 
@@ -159,10 +159,6 @@ class Board
 
   def [](key)
     @squares[key]
-  end
-
-  def square_number(key)
-    @squares[key].unmarked? ? key : Square::INITIAL_MARKER
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -222,6 +218,10 @@ class Board
   end
 
   private
+
+  def square_number(key)
+    @squares[key].unmarked? ? key : Square::INITIAL_MARKER
+  end
 
   def find_squares(keys)
     @squares.values_at(*keys)
@@ -443,7 +443,7 @@ class TTTGame
   end
 
   def human_moves
-    display_move_options
+    prompt('choose', numbers: joinor(board.unmarked_keys))
     square = nil
     loop do
       square = gets.chomp
@@ -454,23 +454,29 @@ class TTTGame
     board[square.to_i] = human.marker
   end
 
+  def human_square_to_win
+    board.square_needed_to_win(human.marker)
+  end
+
+  def computer_square_to_win
+    board.square_needed_to_win(computer.marker)
+  end
+
+  def determine_computer_move
+    if computer_square_to_win
+      computer_square_to_win
+    elsif human_square_to_win
+      human_square_to_win
+    elsif board[MIDDLE_SQUARE].unmarked?
+      MIDDLE_SQUARE
+    else
+      board.unmarked_keys.sample
+    end
+  end
+
   def computer_moves
-    # commented out for testing - uncomment later
     display_computer_moving
-    computer_square_to_win = board.square_needed_to_win(computer.marker)
-    human_square_to_win = board.square_needed_to_win(human.marker)
-
-    square = if computer_square_to_win # offense
-               computer_square_to_win
-             elsif human_square_to_win # defense
-               human_square_to_win
-             elsif board[MIDDLE_SQUARE].unmarked?
-               MIDDLE_SQUARE
-             else
-               board.unmarked_keys.sample
-             end
-
-    board[square] = computer.marker
+    board[determine_computer_move] = computer.marker
   end
 
   def alternate_current_player
