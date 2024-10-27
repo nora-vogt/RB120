@@ -29,8 +29,7 @@ module TTTGameDisplay
 
   def clear_screen_and_display_rules
     clear
-    prompt('rules')
-    puts ""
+    prompt('rules', score: TTTGame::DEFAULT_WINNING_SCORE)
     prompt('exit')
     gets
   end
@@ -51,7 +50,7 @@ module TTTGameDisplay
   end
 
   def display_markers
-    puts format(MESSAGES['scoreboard_markers'], 
+    puts format(MESSAGES['scoreboard_markers'],
                 human: human.marker,
                 computer_name: computer.name,
                 computer: computer.marker)
@@ -92,7 +91,6 @@ module TTTGameDisplay
   def display_player_names
     puts ""
     prompt('display_names', human: human.name, computer: computer.name)
-    puts ""
     pause 1.5
   end
 
@@ -139,7 +137,7 @@ module TTTGameDisplay
   def clear_screen_and_display_play_again
     clear
     prompt('yes_play_again')
-    puts ''
+    puts ""
   end
 end
 
@@ -312,7 +310,7 @@ class TTTGame
   X_MARKER = 'X'
   O_MARKER = 'O'
   MIDDLE_SQUARE = 5
-  DEFAULT_WINNING_SCORE = 2
+  DEFAULT_WINNING_SCORE = 5
 
   include TTTGameDisplay, Formatable
 
@@ -366,10 +364,10 @@ class TTTGame
   end
 
   def read_rules?
-    prompt('ask_rules', score: DEFAULT_WINNING_SCORE)
+    prompt('ask_rules')
     puts ""
     choice = ask_yes_or_no
-    ['y', 'yes'].include?(choice) ? true : false
+    ['y', 'yes'].include?(choice)
   end
 
   def clear_screen_and_set_player_names
@@ -407,9 +405,8 @@ class TTTGame
     end
   end
 
-  def set_winning_score
+  def ask_winning_score
     score = nil
-    puts ""
     prompt('ask_winning_score')
     loop do
       score = nil
@@ -426,7 +423,8 @@ class TTTGame
     choice = ask_default_or_custom_score
 
     if ['y', 'yes'].include?(choice)
-      set_winning_score
+      clear
+      ask_winning_score
     else
       self.winning_score = DEFAULT_WINNING_SCORE
     end
