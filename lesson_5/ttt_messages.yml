@@ -7,7 +7,7 @@ rules: |
     squares in a row wins the round and gets one point. The round ends either
     when someone wins or the board is filled.
 
-    The first player to reach 5 points (default), or the number of points you 
+    The first player to reach %{score} points (default), or the number of points you 
     choose, wins the game. No points will be awarded for tie games.
 
     You may choose who moves first for the first round. The loser will start 
@@ -51,5 +51,5 @@ computer_won_game: "%{name} won the game! Better luck next time."
 tie: "It's a tie!"
 ask_play_again: "Would you like to play again? (y/n)"
 ask_change_settings: "Would you like to change the game settings? (y/n)"
-play_again: "Let's play again!"
+yes_play_again: "Let's play again!"
 goodbye: "Thanks for playing Tic-Tac-Toe! Goodbye!"

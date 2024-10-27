@@ -120,13 +120,14 @@ module TTTGameDisplay
   def display_computer_moving
     print "#{computer.name} is moving"
     %w(. . .).each do |period|
-      pause 0.3
+      pause 0.2
       print period
     end
   end
 
   def display_game_winner
     winner = [human, computer].find { |player| player.score == winning_score }
+    puts ""
     if winner == human
       prompt('human_won_game', number: winning_score)
     else
@@ -135,10 +136,10 @@ module TTTGameDisplay
     puts ""
   end
 
-  def display_play_again_message
-    prompt('play_again')
+  def clear_screen_and_display_play_again
+    clear
+    prompt('yes_play_again')
     puts ''
-    pause 1.5
   end
 end
 
@@ -365,7 +366,7 @@ class TTTGame
   end
 
   def read_rules?
-    prompt('ask_rules')
+    prompt('ask_rules', score: DEFAULT_WINNING_SCORE)
     puts ""
     choice = ask_yes_or_no
     ['y', 'yes'].include?(choice) ? true : false
@@ -563,6 +564,7 @@ class TTTGame
   end
 
   def reset_game
+    clear_screen_and_display_play_again
     configure_settings if reset_settings?
     reset_round
     reset_round_number
@@ -593,7 +595,6 @@ class TTTGame
       play_rounds_until_game_won
       display_game_winner
       break unless play_again?
-      display_play_again_message
       reset_game
     end
   end
