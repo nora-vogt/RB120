@@ -41,7 +41,7 @@ ask_first_player: |
   1. Me
   2. %{computer}
   3. Choose randomly!
-first_player: "%{player} is moving first! The loser of a round will start the next round."
+first_player: "%{player} is moving first! The round loser will start the next round."
 choose: "Choose a square (%{numbers}):"
 invalid_choice: "Sorry, that's not a valid choice."
 human_won_round: "You won this round!"

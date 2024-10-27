@@ -505,13 +505,11 @@ class TTTGame
     alternate_current_player
   end
 
-  def update_round
+  def update_round_number
     @round += 1
   end
 
   def update_round_results
-    update_round
-
     case board.winning_marker
     when human.marker
       human.update_score
@@ -559,6 +557,7 @@ class TTTGame
   end
 
   def reset_round
+    update_round_number
     board.reset
     clear
   end
