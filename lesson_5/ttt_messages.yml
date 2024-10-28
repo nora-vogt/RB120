@@ -1,6 +1,12 @@
-welcome: "Welcome to Tic-Tac-Toe!"
+welcome: |+
+  ***************************
+
+    Welcome to Tic-Tac-Toe!
+
+  ***************************
+
 ask_rules: "Would you like to read the rules? Enter y or n:"
-rules: |
+rules: |+
   In Tic-Tac-Toe, you and the computer take turns marking squares on a board.
     In order to win, you need to mark three squares in a row either vertically,
     horizontally, or diagonally. The first player to successfully mark three

@@ -22,15 +22,13 @@ end
 
 module TTTGameDisplay
   def display_welcome_message
-    prompt('welcome')
-    puts ""
-    pause(1)
+    puts(MESSAGES['welcome'])
+    pause 1
   end
 
   def clear_screen_and_display_rules
     clear
     prompt('rules', score: self.class::DEFAULT_WINNING_SCORE)
-    puts ""
     prompt('exit')
     gets
   end
@@ -129,7 +127,7 @@ module TTTGameDisplay
     if winner == human
       prompt('human_won_game', number: winning_score)
     else
-      prompt('computer_won_game', name: winner.name, 
+      prompt('computer_won_game', name: winner.name,
                                   number: self.class::DEFAULT_WINNING_SCORE)
     end
     puts ""
