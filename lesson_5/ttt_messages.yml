@@ -7,7 +7,7 @@ rules: |
     squares in a row wins the round and gets one point. The round ends either
     when someone wins or the board is filled.
 
-    The first player to reach %{score} points (default), or the number of points you 
+    The first player to reach %{score} points, or the number of points you 
     choose, wins the game. No points will be awarded for tie games.
 
     You may choose who moves first for the first round. The loser will start 
@@ -49,7 +49,7 @@ invalid_choice: "Sorry, that's not a valid choice."
 human_won_round: "You won this round!"
 human_won_game: "You won %{number} rounds and win the game! Congratulations!"
 computer_won_round: "%{name} won this round!"
-computer_won_game: "%{name} won the game! Better luck next time."
+computer_won_game: "%{name} won %{number} rounds and wins the game! Better luck next time."
 tie: "It's a tie!"
 ask_play_again: "Would you like to play again? (y/n)"
 ask_change_settings: "Would you like to change the game settings? (y/n)"

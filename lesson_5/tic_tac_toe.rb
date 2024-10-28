@@ -29,7 +29,7 @@ module TTTGameDisplay
 
   def clear_screen_and_display_rules
     clear
-    prompt('rules', score: TTTGame::DEFAULT_WINNING_SCORE)
+    prompt('rules', score: self.class::DEFAULT_WINNING_SCORE)
     puts ""
     prompt('exit')
     gets
@@ -76,7 +76,8 @@ module TTTGameDisplay
     when human.marker
       prompt('human_won_round')
     when computer.marker
-      prompt('computer_won_round', name: computer.name)
+      prompt('computer_won_round', name: computer.name, 
+                                   number: self.class::DEFAULT_WINNING_SCORE)
     else
       prompt('tie')
     end
@@ -100,7 +101,7 @@ module TTTGameDisplay
 
   def display_winning_score
     puts ""
-    if winning_score == TTTGame::DEFAULT_WINNING_SCORE
+    if winning_score == self.class::DEFAULT_WINNING_SCORE
       prompt('keep_default', number: winning_score)
     else
       prompt('winning_score', number: winning_score,
@@ -163,6 +164,7 @@ class Board
 
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
+
   def draw
     puts "    #{square_number(1)}|    #{square_number(2)}|    #{square_number(3)}"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}  "
