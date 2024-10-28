@@ -76,8 +76,7 @@ module TTTGameDisplay
     when human.marker
       prompt('human_won_round')
     when computer.marker
-      prompt('computer_won_round', name: computer.name, 
-                                   number: self.class::DEFAULT_WINNING_SCORE)
+      prompt('computer_won_round', name: computer.name)
     else
       prompt('tie')
     end
@@ -130,7 +129,8 @@ module TTTGameDisplay
     if winner == human
       prompt('human_won_game', number: winning_score)
     else
-      prompt('computer_won_game', name: winner.name)
+      prompt('computer_won_game', name: winner.name, 
+                                  number: self.class::DEFAULT_WINNING_SCORE)
     end
     puts ""
   end
@@ -162,24 +162,37 @@ class Board
     @squares[key]
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
+  def top_line(numbers)
+    numbers.each do |num|
+      print "    #{square_number(num)}#{num == numbers[-1] ? "\n" : '|'}"
+    end
+  end
 
-  def draw
-    puts "    #{square_number(1)}|    #{square_number(2)}|    #{square_number(3)}"
-    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}  "
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "    #{square_number(4)}|    #{square_number(5)}|    #{square_number(6)}"
-    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}  "
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "    #{square_number(7)}|    #{square_number(8)}|    #{square_number(9)}"
-    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}  "
+  def middle_line(numbers)
+    numbers.each do |num|
+      print "  #{@squares[num]}  #{num == numbers[-1] ? "\n" : '|'}"
+    end
+  end
+
+  def bottom_line
     puts "     |     |"
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
+
+  def divider_line
+    puts "-----+-----+-----"
+  end
+
+  def draw_section(numbers)
+    top_line(numbers)
+    middle_line(numbers)
+    bottom_line
+    divider_line unless numbers == [7, 8, 9]
+  end
+
+  def draw
+    lines = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    lines.each { |line| draw_section(line) }
+  end
 
   def unmarked_keys
     @squares.keys.select { |key| @squares[key].unmarked? }
