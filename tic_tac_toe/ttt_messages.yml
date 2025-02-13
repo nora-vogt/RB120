@@ -1,0 +1,63 @@
+welcome: |+
+  ***************************
+
+    Welcome to Tic-Tac-Toe!
+
+  ***************************
+
+ask_rules: "Would you like to read the rules? Enter y or n:"
+rules: |+
+  In Tic-Tac-Toe, you and the computer take turns marking squares on a board.
+    In order to win, you need to mark three squares in a row either vertically,
+    horizontally, or diagonally. The first player to successfully mark three
+    squares in a row wins the round and gets one point. The round ends either
+    when someone wins or the board is filled.
+
+    The first player to reach %{score} points, or the number of points you 
+    choose, wins the game. No points will be awarded for tie games.
+
+    You may choose who moves first for the first round. The loser will start 
+    the next round. If the round ends in a tie, the player with fewer points 
+    will start the next round.
+
+    Good luck!
+
+exit: "Press [Enter] to exit the rules:"
+ask_name: "Please enter your name:"
+display_names: "Hi %{human}. You'll play against %{computer}."
+invalid_yes_no: "Sorry, must enter y or n."
+invalid_name: "Sorry. Must enter a name:"
+ask_marker: |
+  Choose your marker. Enter 1, 2, or 3:
+  1. X
+  2. O
+  3. Choose randomly!
+invalid_number: "Sorry. Must enter 1, 2, or 3:"
+markers: "You'll play as %{human}. %{computer_name} will be %{computer}."
+scoreboard_markers: "You're %{human}. %{computer_name} is %{computer}."
+ask_default_or_custom_score: |
+  The default score to win Tic-Tac-Toe is %{number} points.
+     Would you like to set a custom winning score?
+
+  => Enter 'y' to set a custom score, or 'n' to use the default score.
+ask_winning_score: "Great! Enter a number between 1-50 for the winning score:"
+invalid_score: "Sorry. Must enter a number between 1 and 50:"
+keep_default: "Ok! We'll stick with the default of winning %{number} rounds to win the game."
+winning_score: "Ok! The first player to win %{number} %{round} wins the game!"
+ask_first_player: |
+  Who should go first? Enter 1, 2, or 3:
+  1. Me
+  2. %{computer}
+  3. Choose randomly!
+first_player: "%{player} is moving first! The round loser will start the next round."
+choose: "Choose a square (%{numbers}):"
+invalid_choice: "Sorry, that's not a valid choice."
+human_won_round: "You won this round!"
+human_won_game: "You won %{number} rounds and win the game! Congratulations!"
+computer_won_round: "%{name} won this round!"
+computer_won_game: "%{name} won %{number} rounds and wins the game! Better luck next time."
+tie: "It's a tie!"
+ask_play_again: "Would you like to play again? (y/n)"
+ask_change_settings: "Would you like to change the game settings? (y/n)"
+yes_play_again: "Let's play again!"
+goodbye: "Thanks for playing Tic-Tac-Toe! Goodbye!"
